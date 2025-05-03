@@ -1,0 +1,14 @@
+services:
+  frontend:
+    image: frontendv2:v2
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: serve -s dist  
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    volumes:
+     - .:/usr/app
+
