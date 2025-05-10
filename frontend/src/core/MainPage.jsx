@@ -21,7 +21,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem(<Link to={"/"}>Home</Link>, '1', <PieChartOutlined />),
   getItem(<Link to={"/ads"}>Ads</Link>, 'sub2', <TeamOutlined />,),
-  getItem(<Link to={"/premium"}>Premium Ads</Link>, 'sub3', <SketchOutlined />,),
+  getItem(<Link to={"/premium"}>Premium Ads</Link>, '2', <SketchOutlined />,),
 ];
 const App = ({ avatar, isLogin, token, userEmail }) => {
   const [collapsed, setCollapsed] = useState(false);

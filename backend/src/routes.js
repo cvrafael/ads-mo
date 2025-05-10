@@ -1,12 +1,15 @@
 const { Router } = require("express");
 const multer = require('multer');
 const {storage} = require('./multer/multer');
+
 const postControllers = require("./controllers/postControllers/postControllers");
 const userControllers = require("./controllers/userControllers/userControllers");
-const likeControllers = require('./controllers/likeControllers/likeControllers')
+const likeControllers = require('./controllers/likeControllers/likeControllers');
+const pixController = require("./controllers/pixControllers/pixControllers");
 
 const upload = multer({storage});
 const router = Router();
+
 
 //Users routes
 router.get("/user/:id", userControllers.findOneUser);
@@ -16,10 +19,15 @@ router.get("/user/avatar/:fk_id_user_entity", userControllers.findAvatar);
 //Posts routes
 router.post("/uploads", upload.single('file'), postControllers.createPost);
 router.get("/posts", postControllers.findAllPosts);
-router.get("/:id", postControllers.findUserPosts);
+router.get("/post/:id", postControllers.findUserPosts);
+router.get("/posts/premium", postControllers.findAllPremiumPosts);
 //Likes routes
 router.post("/like", likeControllers.giveALike);
 router.get("/count/like/:id", likeControllers.countAllPostsLike);
 router.post("/user/like", likeControllers.countLikeByUser);
-
+//Pix Payment
+router.post("/payment", pixController.createPix)
+router.post("/webhook/mercadopago", pixController.statusWebhookMercadoPago);
+router.post("/payment/approved", pixController.verifyStatusPaymentWasApproved);
+router.put("/cancel-payment", pixController.cancelPayment);
 module.exports = router;

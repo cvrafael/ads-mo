@@ -1,0 +1,97 @@
+import React, { useState, useEffect } from 'react';
+import { EditOutlined, EllipsisOutlined, SettingOutlined, SyncOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Avatar, Card, Flex, Tag, Form, Typography } from 'antd';
+import axios from 'axios';
+const { Link } = Typography;
+
+const { Meta } = Card;
+const MyAds = ({ idUser }) => {
+  const [myPosts, setMyPosts] = useState([]);
+
+  useEffect(() => {
+    async function getAllMyPosts(idUser) {
+      await axios.get(`http://localhost:3030/post/${idUser}`)
+        .then((result) => {
+          console.log(result.data);
+          setMyPosts(result.data);
+        })
+    }
+    getAllMyPosts(idUser);
+  }, [])
+
+
+  return (
+    <Flex gap={"middle"} vertical >
+      {myPosts && myPosts.map((post) => {
+        return (
+          <Card
+            key={post.id}
+            cover={
+              <img
+                height={200}
+                alt="example"
+                src={`http://localhost:3030/static/uploads/${post.image}`}
+              />
+            }
+            actions={[
+              <SettingOutlined key="setting" />,
+              <EditOutlined key="edit" />,
+              <EllipsisOutlined key="ellipsis" />,
+            ]}
+          >
+            <Meta
+              avatar={<Avatar src={`http://localhost:3030/static/uploads/${post.image}`} />}
+              title={post.title}
+              description={post.description}
+            />
+
+            <Flex justify='space-between'>
+              <div>
+                <Form>
+
+                  <Form.Item
+                    name={['user', 'website']}
+                    label="Website"
+                  >
+                    <Link href={`http://${post.website}`} target="_blank">
+                      {post.website}
+                    </Link>
+                  </Form.Item>
+                </Form>
+                {post.payment_status == 'pending' ? 
+                <Form> 
+                  <Form.Item>
+                  <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<ExclamationCircleOutlined />} color="warning">Pending</Tag>
+                  </Form.Item>
+                </Form> 
+                : 
+                post.payment_status == 'approved' ? 
+                <Form> 
+                  <Form.Item>
+                    <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<SyncOutlined />} color="success">Premium</Tag>
+                  </Form.Item>
+                </Form>  
+                : post.payment_status == 'rejected' ? 
+                <Form> 
+                  <Form.Item>
+                    <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<CloseCircleOutlined />} color="error">Rejected</Tag>
+                  </Form.Item>
+                </Form> 
+                :  post.payment_status == 'cancelled' ? 
+                <Form> 
+                  <Form.Item>
+                    <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<CloseCircleOutlined />} color="error">Cancelled</Tag>
+                  </Form.Item>
+                </Form> 
+                : ""
+                }
+              </div>
+            </Flex>
+          </Card>
+
+        );
+      })}
+    </Flex >
+  );
+}
+export default MyAds;

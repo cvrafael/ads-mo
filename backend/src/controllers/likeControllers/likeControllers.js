@@ -7,14 +7,15 @@ module.exports = {
       await db.authenticate();
       const { like, fk_id_user_entity, fk_id_post } = req.body;
 
-      const giveLike = await db.query(
-        `INSERT INTO public.like ("like", "fk_id_user_entity", "fk_id_post")
-              VALUES ('${like}', '${fk_id_user_entity}', '${fk_id_post}')
-              ON CONFLICT (fk_id_user_entity, fk_id_post) DO UPDATE 
-              SET "like" = EXCLUDED.like;`,
-        { type: QueryTypes.INSERT }
-      );
-      res.status(200).json(giveLike);
+    
+        const giveLike = await db.query(
+          `INSERT INTO public.like ("like", "fk_id_user_entity", "fk_id_post")
+                VALUES ('${like}', '${fk_id_user_entity}', '${fk_id_post}')
+                ON CONFLICT (fk_id_user_entity, fk_id_post) DO UPDATE 
+                SET "like" = EXCLUDED.like;`,
+          { type: QueryTypes.INSERT }
+        );
+        res.status(200).json(giveLike);
 
     } catch (error) {
       res.status(400).json({ error });
@@ -59,11 +60,21 @@ module.exports = {
       const { fk_id_post, fk_id_user_entity } = req.body;
 
       const countLike = await db.query(
-        `SELECT "like"
-          FROM public.like as pl
-          where pl.fk_id_user_entity = '${fk_id_user_entity}' 
-          and pl.fk_id_post = '${fk_id_post}';`,
+        `SELECT 
+          CASE 
+            WHEN EXISTS (
+              SELECT "like" FROM public.like 
+              WHERE fk_id_user_entity = '${fk_id_user_entity}' 
+              AND fk_id_post = '${fk_id_post}'
+            ) THEN (
+              SELECT "like" FROM public.like 
+              WHERE fk_id_user_entity = '${fk_id_user_entity}' 
+              AND fk_id_post = '${fk_id_post}'
+            )
+            ELSE '0'
+          END AS "like";`,
         { type: QueryTypes.SELECT })
+        console.log(countLike)
 
       res.status(200).json(countLike);
     } catch (error) {

@@ -89,6 +89,7 @@ const Profile = ({idUser}) => {
     <Form.Item
       name={['avatar', 'image']}
       label="Avatar"
+      valuePropName="image"
       rules={[
         {
           required: true,
@@ -105,11 +106,10 @@ const Profile = ({idUser}) => {
             }
           })
         }}
-     
         accept='.jpg'
         maxCount={1}
       >
-      <Avatar size={50} icon={<UserOutlined />} src={avatar?`http://localhost:8181/uploads/${avatar.image}`: 'http://localhost:8181/uploads/mu-online-bk.jpeg'} />
+      <Avatar size={50} icon={<UserOutlined />} src={avatar?`http://localhost:3030/static/uploads/${avatar.image}`: 'http://localhost:3030/static/uploads/mu-online-bk.jpeg'} />
     </Upload>
 
     </Form.Item>
