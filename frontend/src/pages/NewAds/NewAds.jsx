@@ -1,12 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Button, Form, Input, Upload, Checkbox, Flex, Spin } from 'antd';
+import { Button, Form, Input, Upload, Checkbox, Flex, Alert  } from 'antd';
 import { useNavigate } from "react-router";
 // import emailjs from '@emailjs/browser';
 import {postApiMercadoPago, postApiUploadAds, getPaymentStatus, verifyPaymentWasApproved, handleCancelPayment } from './apiNewAds';
 
 const NewAds = ({ idUser, userEmail }) => {
   const [checked, setChecked] = useState(false);
+  const [form] = Form.useForm();
   const [areaPix, setReturnAreaPix] = useState("");
+  const [successAlert, setSuccessAlert] = useState('');
+  const [errorAlert, setErrorAlert] = useState('');
   const [paymentResult, setPaymentResult] = useState('');
   const [paymentResultStatus, setPaymentResultStatus] = useState('');
   const [buttonCancelPayment, setButtonCancelPayment] = useState('');
@@ -22,9 +25,8 @@ const NewAds = ({ idUser, userEmail }) => {
       interval = setInterval(() => {
         verifyPaymentWasApproved(paymentResult.id)
           .then((result) => {
-            console.log('verifyPaymentWasApprovedtestest',result.data);
-
             if (result.data === "approved") {
+              setSuccessAlert(<Alert message="Success Tips" type="success" showIcon />)
               clearInterval(interval);
               navigate("/myads");
             }
@@ -56,89 +58,101 @@ const NewAds = ({ idUser, userEmail }) => {
     },
   };
 
-  useEffect(() => {
-    postApiMercadoPago(userEmail, idUser).then((result)=> {
-      setPaymentResult(result.data);// point_of_interaction.transaction_data.ticket_url
-    });
-  }, []);
-
-  // const waitingPayment = (idPayment) => {
-    
-  //   setInterval(()=>{
-  //       if (waitingPaymentWasApproved !== 'approved') {
-  //       verifyPaymentWasApproved(idPayment)
-  //       .then((result) => {
-  //         console.log('waitingPayment',result.data);
-  //         setWaitingPaymentWasApproved(result.data);
-  //       });
-  //       console.log('setInterval')
-  //     }
-  //     }, 4000)
-  //   disabledSubmit.current.disabled = false;
-  // }
-
   const onFinish = async (values) => {
+  try {
 
-    if (checked == true) {
-      setIsChecking(true)
-      setReturnAreaPix(<>
-        <iframe style={{ width: 600, height: 600, border: "none" }} src={paymentResult.point_of_interaction.transaction_data.ticket_url} />
-      </>);
-      getPaymentStatus(paymentResult.id)
-      .then((result) => {
-        setPaymentResultStatus(result.data.status) 
-      });
+    let pagamento = {
+      status: 'not_required',
+      id: '',
+      point_of_interaction: {
+        transaction_data: {
+          ticket_url: ''
+        }
+      }
+    };
+    
+    if (checked === true) {
+      console.log(values.user.title);
+      const result = await postApiMercadoPago(userEmail, idUser, values.user.title);
+      pagamento = result.data;
+  
+      setPaymentResult(pagamento);
+      setIsChecking(true);
+
+      setReturnAreaPix(
+        <iframe
+          style={{ width: 600, height: 600, border: "none" }}
+          src={pagamento.point_of_interaction.transaction_data.ticket_url}
+        />
+      );
+
+      const statusResult = await getPaymentStatus(pagamento.id);
+      setPaymentResultStatus(statusResult.data.status);
+
       setWaitingApprovedPayment('Waiting payment');
       disabledSubmit.current.disabled = true;
-      setButtonCancelPayment(<Button color="default" onClick={() => {handleCancelPayment(paymentResult.id, navigate)}}>Cancel Payment?</Button>)
+
+      setButtonCancelPayment(
+        <Button color="default" onClick={() => handleCancelPayment(pagamento.id, navigate)}>
+          Cancel Payment?
+        </Button>
+      );
+
       setChecked(false);
     } else {
       setReturnAreaPix("");
-
-      // disabledSubmit.current.disabled = false;
     }
-    
+
     const newArrayObject = {
       ...values.user,
-      'image': values.user.image.file.name,
-      'fk_id_user_entity': idUser,
-      'file': values.user.image.file,
-      'premium': checked,
-      'website': values.user.website,
-      'payment_status': paymentResult.status,
-      'id_payment': paymentResult.id
-    }
+      image: values.user.image.file.name,
+      fk_id_user_entity: idUser,
+      file: values.user.image.file,
+      premium: checked,
+      website: values.user.website,
+      payment_status: pagamento.status,
+      id_payment: pagamento.id,
+    };
 
-    try {
-      postApiUploadAds(newArrayObject);
-    } catch (error) {
-      console.log(error);
-    }
+    await postApiUploadAds(newArrayObject)
+        .then(()=>{
+          if (checked == true) {
+            setSuccessAlert(<Alert style={{width: 600}} message="Waiting some seconds, checking payment..." type="success" showIcon />);  
+          }else {
+            setSuccessAlert(<Alert style={{width: 600}} message="Ad registered with success" type="success" showIcon />);
+            const intervalId = setInterval(() => {
+              form.resetFields();
+              setSuccessAlert('');
+              clearInterval(intervalId);
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          if (checked == true) {
+            handleCancelPayment(pagamento.id)
+            .then(()=>{
+              console.log('teste')
+              setSuccessAlert(<Alert style={{width: 600}} message="Payment cancelled. Already exists this image or title!" type="error" showIcon />);
+              setReturnAreaPix("");
+              setWaitingApprovedPayment('Submit');
+              disabledSubmit.current.disabled = false;
+              form.resetFields();
+            })
+            .catch(() => {
+              setSuccessAlert(<Alert style={{width: 600}} message="Do not possible cancel payment." type="error" showIcon />);
+            })
+            setButtonCancelPayment('');
+          }else {
+            
+            setSuccessAlert(<Alert style={{width: 600}} message={`${error.request.response}`} type="error" showIcon />);
+          }
+        });
+        
+  } catch (error) {
+      console.error("Erro durante o processamento:", error);
+  }
+};
 
-    // waitingPayment(paymentResult.id);
-    // const caio = {
-    //   name:'caaiioviictor@gmail.com',
-    //   email: 'caio-victor-rafael@hotmail.com',
-    //   to_name: 'caio',
-
-    //   message: 'olá'
-
-    // }
-
-    // emailjs
-    // .send('service_3qm9yen', 'template_ygm4d1b', caio,
-    //  {
-    //   publicKey: 'lIhGRAXkwkjmRctfW',
-    // })
-    // .then(
-    //   () => {
-    //     console.log('SUCCESS!');
-    //   },
-    //   (error) => {
-    //     console.log('FAILED...', error.text);
-    //   },
-    // );
-  };
 
   const showPixArea = (e) => {
     setChecked(e.target.checked);  
@@ -148,6 +162,7 @@ const NewAds = ({ idUser, userEmail }) => {
       disabledSubmit.current.disabled = false;
       setWaitingApprovedPayment('Submit');
       setButtonCancelPayment('');
+      setSuccessAlert('');
     }
   }
   // const returnNormalAd = (value) => {
@@ -157,16 +172,21 @@ const NewAds = ({ idUser, userEmail }) => {
   return (
 
     <Flex vertical  >
+      
       <Flex gap={150}>
         <Form
           {...layout}
           name="nest-messages"
           onFinish={onFinish}
+          form={form}
           style={{
             width: 300,
           }}
           validateMessages={validateMessages}
         >
+          <Form.Item>
+            {successAlert}
+          </Form.Item>
           <Form.Item
             name={['user', 'image']}
             label="Image Logo"
@@ -177,6 +197,7 @@ const NewAds = ({ idUser, userEmail }) => {
               },
             ]}
           >
+           
             <Upload
               beforeUpload={(file) => {
                 return new Promise((resolve, reject) => {

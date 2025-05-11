@@ -1,15 +1,15 @@
 import axios from "axios"
-
-export async function postApiMercadoPago(email, idUser) {
-    return await axios.post("http://localhost:3030/payment", {email: email, user_id: idUser});
+export async function postApiMercadoPago(email, idUser, postName) {
+    return await axios.post("http://localhost:3030/payment", {email: email, user_id: idUser, postName});
 }
 
 export async function postApiUploadAds(newArrayObject) {
     return await axios.post("http://localhost:3030/uploads", newArrayObject, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        }});
+        }})
 }
+
 export async function getPaymentStatus(paymentId) {
     console.log('paymentId apiNewAds',paymentId)
     return await axios.get(`https://api.mercadopago.com/v1/payments/${paymentId}`,{
@@ -22,15 +22,8 @@ export async function verifyPaymentWasApproved(paymentId) {
   return await axios.post(`http://localhost:3030/payment/approved`, {id_payment: paymentId});
 }
 
-export async function handleCancelPayment(paymentId, navigate) {
+export async function handleCancelPayment(paymentId) {
   console.log(paymentId);
     return await axios.put('http://localhost:3030/cancel-payment', {paymentId} )
-    .then(()=>{
-      alert('Pagamento cancelado!');
-      navigate('/myads')
-    })
-    .catch((error) => {
-      alert('Erro ao cancelar pagamento.');
-      console.error(error);
-  })
+   
 }

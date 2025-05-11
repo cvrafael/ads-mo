@@ -54,7 +54,7 @@ const Ads = ({ idUser }) => {
 
   useEffect(() => {
     getAllPosts();
-  }, [LikeValue.current]);
+  }, []);
 
   return (
     <Flex gap={"middle"} vertical >

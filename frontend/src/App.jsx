@@ -12,18 +12,18 @@ import PremiumAds from './pages/PremiumAds/PremiumAds.jsx';
 import PixMercadoPago from './components/PixMercadoPago/PixMercadoPago.jsx';
 
 const App = () => {
-    const [isLogin, token, idUser, userEmail, clients ] = useAuth();
+    const [isLogin, clients, isAdmin ] = useAuth();
 
   return (
     <Routes>
-      <Route path="/" element={<Main avatar={<Avatar logout={clients} idUser={idUser} />} isLogin={isLogin} token={token} userEmail={userEmail}/>}>
-        <Route path="/" element={<Ads idUser={idUser}/>} />
-        <Route path="/ads" element={<Ads idUser={idUser} />} />
-        <Route path="/myads" element={<MyAds idUser={idUser} />}/>
-        <Route path="/profile" element={<Profile idUser={idUser} />} />
-        <Route path="/newads" element={<NewAds idUser={idUser} userEmail={userEmail} />} />
-        <Route path="/premium" element={<PremiumAds idUser={idUser} />} />
-        <Route path="/mercadopg" element={<PixMercadoPago userEmail={userEmail}/>} />
+      <Route path="/" element={<Main avatar={<Avatar userFirstName={clients?.tokenParsed?.name} logout={clients?.logout} idUser={clients?.tokenParsed?.sub} />} isLogin={isLogin} token={clients?.token} userEmail={clients?.tokenParsed?.email} isAdmin={isAdmin} />}>
+        <Route path="/" element={<Ads idUser={clients?.tokenParsed?.sub}/>} />
+        <Route path="/ads" element={<Ads idUser={clients?.tokenParsed?.sub} />} />
+        <Route path="/myads" element={<MyAds idUser={clients?.tokenParsed?.sub} />}/>
+        <Route path="/profile" element={<Profile idUser={clients?.tokenParsed?.sub} />} />
+        <Route path="/newads" element={<NewAds idUser={clients?.tokenParsed?.sub} userEmail={clients?.tokenParsed?.email} />} />
+        <Route path="/premium" element={<PremiumAds idUser={clients?.tokenParsed?.sub} />} />
+        <Route path="/mercadopg" element={<PixMercadoPago userEmail={clients?.tokenParsed?.email}/>} />
         <Route path="/*" element={<NotExists />} />
       </Route>
     </Routes>

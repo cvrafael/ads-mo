@@ -14,6 +14,7 @@ const useAuth = () => {
   const [idUser, setIduser] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [clients, setClients] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     if (isRun.current) return;
@@ -26,15 +27,18 @@ const useAuth = () => {
       pkceMethod: 'S256',
     })
     .then((res) => {
+      console.log('clients useAuth.jsx', client)
       setLogin(res);
       setToken(client.token);
       setIduser(client.tokenParsed.sub);
       setUserEmail(client.tokenParsed.email);
       setClients(client)
+      const roles = client.tokenParsed?.realm_access?.roles || [];
+      setIsAdmin(roles.includes('ads-mo-adm'));
       });
   }, []);
 
-  return [isLogin, token, idUser, userEmail, clients];
+  return [isLogin, clients, isAdmin];
 };
 
 export default useAuth;

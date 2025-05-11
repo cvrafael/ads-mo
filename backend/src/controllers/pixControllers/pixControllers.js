@@ -15,12 +15,14 @@ module.exports = {
     async createPix(req, res) {
 
         try {
-            const {email, idUser}= req.body;
+            const {email, idUser, postName} = req.body;
+
+            console.log('req.body',req.body);
             
             const pix = await payment.create({
                 body: {
                     transaction_amount: 0.01,
-                    description: process.env.DESCRIPTION,
+                    description: `Pagamento para o produto: ${postName}`,
                     payment_method_id: process.env.PIX,
                     payer: {
                         email: email,
@@ -71,7 +73,7 @@ module.exports = {
           }
     },
     async verifyStatusPaymentWasApproved(req, res) {
-        try {
+       
             const {id_payment} = req.body;
 
             const [verifyPaymentStatys] = await db.query(`
@@ -80,18 +82,12 @@ module.exports = {
                 ORDER BY timestamp DESC 
                 LIMIT 1;
               `, { type: QueryTypes.SELECT });
-
-              console.log('verifyPaymentStatys',verifyPaymentStatys.payment_status)
-              
+              console.log(verifyPaymentStatys);
               if (verifyPaymentStatys && verifyPaymentStatys.payment_status == 'approved') {
                 return res.status(200).json(verifyPaymentStatys.payment_status);
               }else {
-                console.log('else');
-                return res.status(400).json(verifyPaymentStatys.payment_status);
+                return res.status(200).json(`Payment status: pending or diferent`);
               }
-          } catch (error) {
-            res.status(500).send('Erro interno');
-          }
     },
     async cancelPayment(req, res) {
       

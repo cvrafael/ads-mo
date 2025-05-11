@@ -8,15 +8,18 @@ module.exports = {
       // const { id } = req.params;
       const { title, description, image, fk_id_user_entity, premium, website, payment_status, id_payment } = req.body;
 
-      const post = await db.query(
+      const img = await db.query(
         `SELECT image
 	        FROM public.posts where image = '${image}';`,
           { type: QueryTypes.SELECT });
 
-          console.log('post', post);
+      const tle = await db.query(
+        `SELECT title
+	        FROM public.posts where title = '${title}';`,
+          { type: QueryTypes.SELECT });
 
-      if (post != "") {
-        res.status(400).json({ message: "Ops... already exists a image with name." });
+      if (img != "" || tle != "") {
+        res.status(400).json("Ops... already exists a image or title with this name. Try again.");
       } else {
         const posts = await db.query(
         `INSERT INTO "public"."posts" ("title","description","image","fk_id_user_entity", "premium", "website", "payment_status", "id_payment") VALUES ('${title}','${description}','${image}','${fk_id_user_entity}', '${premium}', '${website}', '${payment_status}', '${id_payment}');`,
@@ -25,8 +28,7 @@ module.exports = {
       }
 
     } catch (error) {
-      res.status(400).json({ error });
-      console.log('Erro ao tentar criar um novo POST', error)
+      res.status(400).json({ message: `message: ${error}` });
     }
   },
   async findAllPosts(req, res) {

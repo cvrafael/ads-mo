@@ -10,6 +10,8 @@ import {
 import { Breadcrumb, Layout, Menu, theme, Typography } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
+const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -18,12 +20,14 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+
 const items = [
-  getItem(<Link to={"/"}>Home</Link>, '1', <PieChartOutlined />),
+  getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
   getItem(<Link to={"/ads"}>Ads</Link>, 'sub2', <TeamOutlined />,),
-  getItem(<Link to={"/premium"}>Premium Ads</Link>, '2', <SketchOutlined />,),
+  getItem(<Link to={"/premium"}>Premium Ads</Link>, '200', <SketchOutlined />,),
+  isAdmin? getItem(<Link to={"/administração"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
-const App = ({ avatar, isLogin, token, userEmail }) => {
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },

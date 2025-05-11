@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Flex, Popconfirm } from 'antd';
 
-const AvatarCard = ({ logout, idUser }) => {
+const AvatarCard = ({ logout, idUser, userFisrtName }) => {
   const [ avatar, setAvatar] = useState([])
   
   useEffect(()=>{
@@ -22,7 +22,7 @@ const AvatarCard = ({ logout, idUser }) => {
       <Flex vertical>
         <Link to='/profile'>Profile</Link>
         <Link to='/myads'>Ads</Link>
-        <a onClick={() => { logout.logout() }}>logout</a>
+        <a onClick={() => { logout() }}>logout</a>
       </Flex>
     );
   };
@@ -31,7 +31,7 @@ const AvatarCard = ({ logout, idUser }) => {
     <>
       <Popconfirm
         placement="left"
-        title={logout.tokenParsed.name}
+        title={userFisrtName}
         description={description(logout)}
         showCancel={false}
       >
