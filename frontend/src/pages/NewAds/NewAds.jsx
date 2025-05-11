@@ -18,6 +18,7 @@ const NewAds = ({ idUser, userEmail }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('teste');
 
     if (isChecking) {
       intervalRef.current = setInterval(() => {
