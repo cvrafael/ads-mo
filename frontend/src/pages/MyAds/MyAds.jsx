@@ -30,7 +30,7 @@ const MyAds = ({ idUser }) => {
               <img
                 height={200}
                 alt="example"
-                src={`http://localhost:3030/static/uploads/${post.image}`}
+                src={`${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}`}
               />
             }
             actions={[
@@ -40,7 +40,7 @@ const MyAds = ({ idUser }) => {
             ]}
           >
             <Meta
-              avatar={<Avatar src={`http://localhost:3030/static/uploads/${post.image}`} />}
+              avatar={<Avatar src={`${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}`} />}
               title={post.title}
               description={post.description}
             />
