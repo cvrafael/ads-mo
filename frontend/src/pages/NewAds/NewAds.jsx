@@ -9,35 +9,36 @@ const NewAds = ({ idUser, userEmail }) => {
   const [form] = Form.useForm();
   const [areaPix, setReturnAreaPix] = useState("");
   const [successAlert, setSuccessAlert] = useState('');
-  const [errorAlert, setErrorAlert] = useState('');
   const [paymentResult, setPaymentResult] = useState('');
-  const [paymentResultStatus, setPaymentResultStatus] = useState('');
   const [buttonCancelPayment, setButtonCancelPayment] = useState('');
   const disabledSubmit = useRef(null);
+  const intervalRef = useRef(null);
   const[ waitingApprovedPayment, setWaitingApprovedPayment ]= useState('Submit');
   const [isChecking, setIsChecking] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    let interval;
 
     if (isChecking) {
-      interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
+        console.log('setInterval executing')
         verifyPaymentWasApproved(paymentResult.id)
-          .then((result) => {
+        .then((result) => {
             if (result.data === "approved") {
               setSuccessAlert(<Alert message="Success Tips" type="success" showIcon />)
-              clearInterval(interval);
+              clearInterval(intervalRef.current);
               navigate("/myads");
+            }else if (result.data === "cancelled"){
+              clearInterval(intervalRef.current);
             }
           })
           .catch((err) => {
             console.error("Erro ao verificar status:", err.message);
           });
-      }, 5000); // checa a cada 5 segundos
+      }, 3000);
     }
 
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalRef.current);
   }, [isChecking, navigate]);
 
   const layout = {
@@ -72,7 +73,6 @@ const NewAds = ({ idUser, userEmail }) => {
     };
     
     if (checked === true) {
-      console.log(values.user.title);
       const result = await postApiMercadoPago(userEmail, idUser, values.user.title);
       pagamento = result.data;
   
@@ -86,18 +86,24 @@ const NewAds = ({ idUser, userEmail }) => {
         />
       );
 
-      const statusResult = await getPaymentStatus(pagamento.id);
-      setPaymentResultStatus(statusResult.data.status);
+      await getPaymentStatus(pagamento.id);
+      // setPaymentResultStatus(statusResult.data.status);
 
       setWaitingApprovedPayment('Waiting payment');
       disabledSubmit.current.disabled = true;
 
       setButtonCancelPayment(
-        <Button color="default" onClick={() => handleCancelPayment(pagamento.id, navigate)}>
+        <Button color="default" onClick={() =>{ 
+          handleCancelPayment(pagamento.id).then(() => {
+          setButtonCancelPayment('');
+          setReturnAreaPix('');
+          setSuccessAlert(<Alert style={{width: 300}} message="Payment cancelled." type="success" showIcon />);
+          disabledSubmit.current.disabled = false;
+          setWaitingApprovedPayment('Submit');
+        })}}>
           Cancel Payment?
         </Button>
       );
-
       setChecked(false);
     } else {
       setReturnAreaPix("");
@@ -117,13 +123,12 @@ const NewAds = ({ idUser, userEmail }) => {
     await postApiUploadAds(newArrayObject)
         .then(()=>{
           if (checked == true) {
-            setSuccessAlert(<Alert style={{width: 600}} message="Waiting some seconds, checking payment..." type="success" showIcon />);  
+            setSuccessAlert(<Alert style={{width: 300}} message="Waiting some seconds, checking payment..." type="success" showIcon />);  
           }else {
-            setSuccessAlert(<Alert style={{width: 600}} message="Ad registered with success" type="success" showIcon />);
-            const intervalId = setInterval(() => {
+            setSuccessAlert(<Alert style={{width: 300}} message="Ad registered with success" type="success" showIcon />);
+            setTimeout(() => {
               form.resetFields();
               setSuccessAlert('');
-              clearInterval(intervalId);
             }, 3000);
           }
         })
@@ -131,20 +136,21 @@ const NewAds = ({ idUser, userEmail }) => {
           if (checked == true) {
             handleCancelPayment(pagamento.id)
             .then(()=>{
-              console.log('teste')
-              setSuccessAlert(<Alert style={{width: 600}} message="Payment cancelled. Already exists this image or title!" type="error" showIcon />);
-              setReturnAreaPix("");
+              setSuccessAlert(<Alert style={{width: 300}} message="Payment cancelled. Already exists this image or title!" type="error" showIcon />);
+              setTimeout(() => {
+                setSuccessAlert('');
+              }, 4000)
               setWaitingApprovedPayment('Submit');
               disabledSubmit.current.disabled = false;
               form.resetFields();
+              setReturnAreaPix('');
             })
             .catch(() => {
-              setSuccessAlert(<Alert style={{width: 600}} message="Do not possible cancel payment." type="error" showIcon />);
+              setSuccessAlert(<Alert style={{width: 300}} message="Do not possible cancel payment." type="error" showIcon />);
             })
             setButtonCancelPayment('');
           }else {
-            
-            setSuccessAlert(<Alert style={{width: 600}} message={`${error.request.response}`} type="error" showIcon />);
+            setSuccessAlert(<Alert style={{width: 300}} message={`${error.request.response}`} type="error" showIcon />);
           }
         });
         
@@ -153,11 +159,11 @@ const NewAds = ({ idUser, userEmail }) => {
   }
 };
 
-
   const showPixArea = (e) => {
     setChecked(e.target.checked);  
-    console.log(checked)
+    console.log('paymentResult.id',paymentResult.id)
     if (checked == false) {
+      handleCancelPayment(paymentResult.id);
       setReturnAreaPix('');
       disabledSubmit.current.disabled = false;
       setWaitingApprovedPayment('Submit');

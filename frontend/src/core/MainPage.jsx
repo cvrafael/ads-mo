@@ -7,7 +7,7 @@ import {
   TeamOutlined,
   SketchOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Typography } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Flex } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
 const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
@@ -23,8 +23,8 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
-  getItem(<Link to={"/ads"}>Ads</Link>, 'sub2', <TeamOutlined />,),
-  getItem(<Link to={"/premium"}>Premium Ads</Link>, '200', <SketchOutlined />,),
+  getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
+  getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
   isAdmin? getItem(<Link to={"/administração"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
 
@@ -49,12 +49,16 @@ const items = [
             display: "flex",
             padding: 0,
             background: colorBgContainer,
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
+          <h1></h1>
+          <h1>Sejam Todos Bem-vindos</h1>
+          <Flex align='center'>
           <ButtonNewAds />
           {avatar}
+          </Flex>
         </Header>
         <Content
           style={{

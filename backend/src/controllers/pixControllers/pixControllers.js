@@ -85,8 +85,12 @@ module.exports = {
               console.log(verifyPaymentStatys);
               if (verifyPaymentStatys && verifyPaymentStatys.payment_status == 'approved') {
                 return res.status(200).json(verifyPaymentStatys.payment_status);
-              }else {
-                return res.status(200).json(`Payment status: pending or diferent`);
+              }else if (verifyPaymentStatys && verifyPaymentStatys.payment_status == 'cancelled') {
+                await db.query(`
+                DELETE FROM public.posts 
+                WHERE id_payment = '${id_payment}';
+              `, { type: QueryTypes.DELETE });
+                return res.status(200).json(verifyPaymentStatys.payment_status);
               }
     },
     async cancelPayment(req, res) {
@@ -94,7 +98,7 @@ module.exports = {
       try {
         const { paymentId } = req.body;
       
-        if (!paymentId) return res.status(400).json({ message: 'ID do pagamento não informado' });
+        if (!paymentId) return res.status(200).json({ message: 'ID do pagamento não informado' });
         
         const response = await axios.put(
           `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -114,8 +118,7 @@ module.exports = {
     
         res.status(200).json(`${response.data }`);
       } catch (error) {
-        console.error('Erro ao cancelar pagamento:', error?.response?.data || error);
-        res.status(500).json({ message: 'Erro ao cancelar pagamento' });
+        res.status(400).json({ message: 'Does not possible cancel payment.' });
       }
     }
 }

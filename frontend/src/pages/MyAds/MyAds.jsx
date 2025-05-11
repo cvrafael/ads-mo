@@ -12,7 +12,6 @@ const MyAds = ({ idUser }) => {
     async function getAllMyPosts(idUser) {
       await axios.get(`http://localhost:3030/post/${idUser}`)
         .then((result) => {
-          console.log(result.data);
           setMyPosts(result.data);
         })
     }

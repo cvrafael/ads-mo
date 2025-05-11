@@ -1,5 +1,6 @@
 import axios from "axios"
 export async function postApiMercadoPago(email, idUser, postName) {
+  console.log('catch error')
     return await axios.post("http://localhost:3030/payment", {email: email, user_id: idUser, postName});
 }
 
@@ -23,7 +24,5 @@ export async function verifyPaymentWasApproved(paymentId) {
 }
 
 export async function handleCancelPayment(paymentId) {
-  console.log(paymentId);
-    return await axios.put('http://localhost:3030/cancel-payment', {paymentId} )
-   
+    return await axios.put('http://localhost:3030/cancel-payment', {paymentId} )   
 }

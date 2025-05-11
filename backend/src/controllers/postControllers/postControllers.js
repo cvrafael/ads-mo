@@ -48,7 +48,7 @@ module.exports = {
             public.posts pp
           LEFT JOIN 
             public.like pl ON pp.id = pl.fk_id_post
-          WHERE pp.payment_status <> 'pending'
+          WHERE pp.payment_status <> 'pending' and pp.payment_status <> 'cancelled'
           GROUP BY 
             pp.id, pp.title, pp.description, pp.image
           ORDER BY 
