@@ -19,8 +19,11 @@ router.get("/user/avatar/:fk_id_user_entity", userControllers.findAvatar);
 //Posts routes
 router.post("/uploads", upload.single('file'), postControllers.createPost);
 router.get("/posts", postControllers.findAllPosts);
+router.get("/posts-admin", postControllers.findAllPostsToValidation);
 router.get("/post/:id", postControllers.findUserPosts);
 router.get("/posts/premium", postControllers.findAllPremiumPosts);
+router.put("/post-validation/:id", postControllers.updateToValidationPost);
+router.put("/post-update/:id", postControllers.updatePost);
 //Likes routes
 router.post("/like", likeControllers.giveALike);
 router.get("/count/like/:id", likeControllers.countAllPostsLike);

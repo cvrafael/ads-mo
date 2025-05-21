@@ -10,6 +10,7 @@ import NotExists from "./components/NotExists.jsx";
 import useAuth from "./hooks/useAuth.jsx";
 import PremiumAds from './pages/PremiumAds/PremiumAds.jsx';
 import PixMercadoPago from './components/PixMercadoPago/PixMercadoPago.jsx';
+import Administrator from './pages/Administrator/Administrator.jsx';
 
 const App = () => {
     const [isLogin, clients, isAdmin ] = useAuth();
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/profile" element={<Profile idUser={clients?.tokenParsed?.sub} />} />
         <Route path="/newads" element={<NewAds idUser={clients?.tokenParsed?.sub} userEmail={clients?.tokenParsed?.email} />} />
         <Route path="/premium" element={<PremiumAds idUser={clients?.tokenParsed?.sub} />} />
+        <Route path="/admin" element={<Administrator idUser={clients?.tokenParsed?.sub} />} />
         <Route path="/mercadopg" element={<PixMercadoPago userEmail={clients?.tokenParsed?.email}/>} />
         <Route path="/*" element={<NotExists />} />
       </Route>

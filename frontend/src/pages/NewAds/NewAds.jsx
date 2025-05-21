@@ -119,6 +119,7 @@ const NewAds = ({ idUser, userEmail }) => {
       website: values.user.website,
       payment_status: pagamento.status,
       id_payment: pagamento.id,
+      status: 'analysis'
     };
 
     await postApiUploadAds(newArrayObject)
