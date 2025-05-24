@@ -173,27 +173,20 @@ module.exports = {
       console.log(error);
     }
   },
+  async deletePost(req, res) {
+    const {id} = req.params;
+    try {
+      await db.authenticate();
 
- 
-  // async deleteUser(req, res) {
-  //   try {
-  //     const { id } = req.params;
+      await db.query(
+        ` DELETE FROM public.posts where id = '${id}'`,
+          { type: QueryTypes.DELETE });
 
-  //     const user = await User.findOne({ where: { id } });
+      res.status(200).json({message: 'Post deleted with success'});
+    } catch (error) {
+      res.status(400).json({ error });
+    }
+  },
 
-  //     if (!user) {
-  //       res.status(401).json({ message: "Ops... usuario não existe" });
-  //     } else {
-  //       await User.destroy({ where: { id } })
-  //       res.status(200).json({ msg: "usuario deletado" });
-  //     }
-
-
-  //   } catch (error) {
-  //     res.status(400).json({ error });
-  //   }
-
-
-  // }
 
 }

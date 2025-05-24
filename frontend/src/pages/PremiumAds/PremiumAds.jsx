@@ -13,7 +13,6 @@ const PremiumAds = ({ idUser }) => {
         await axios.get('http://localhost:3030/posts/premium')
             .then((result) => {
                 setPosts(result.data);
-                console.log(result.data);
             });
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SyncOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { Avatar, Card, Flex, Typography, Form, Tag, Popover, Button, Space, Upload, Input, Alert } from 'antd';
@@ -10,6 +10,7 @@ const { Meta } = Card;
 const Administrator = ({ idUser }) => {
     const [posts, setPosts] = useState([]);
     const [form] = Form.useForm();
+    const monitClick = useRef();
     const [successAlert, setSuccessAlert] = useState('');
 
     const contentToVerify = (id) => {
@@ -29,7 +30,7 @@ const Administrator = ({ idUser }) => {
         }
         return (
         <Space>
-            <Button type='primary' onClick={()=>{ApproveAd(id)}}>Approve</Button>
+            <Button type='primary' onClick={()=>{ApproveAd(id)}} ref={monitClick} >Approve</Button>
             <Button onClick={() => {RepproveAd()}}>Repprove</Button>
         </Space>
 
@@ -140,7 +141,7 @@ const Administrator = ({ idUser }) => {
 
     useEffect(() => {
         getAllPosts();
-    }, []);
+    }, [monitClick.current]);
 
     return (
         <Flex gap={"middle"} vertical >
@@ -160,12 +161,11 @@ const Administrator = ({ idUser }) => {
 
                             <Flex justify='space-around'>
                                 <Popover content={contentToVerify(posts.id)} title="Ads Verification" trigger="hover">
-                                    <SettingOutlined key="setting" />,
+                                    <SettingOutlined key="setting" />
                                 </Popover>
                                 <Popover content={contentToEdit(posts.title, posts.website, posts.description)} trigger="hover">
-                                    <EditOutlined key="edit" />,
+                                    <EditOutlined key="edit" />
                                 </Popover>
-
                             </Flex>
                         ]}
                     >

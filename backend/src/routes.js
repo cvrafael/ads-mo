@@ -24,6 +24,7 @@ router.get("/post/:id", postControllers.findUserPosts);
 router.get("/posts/premium", postControllers.findAllPremiumPosts);
 router.put("/post-validation/:id", postControllers.updateToValidationPost);
 router.put("/post-update/:id", postControllers.updatePost);
+router.delete("/post-delete/:id", postControllers.deletePost);
 //Likes routes
 router.post("/like", likeControllers.giveALike);
 router.get("/count/like/:id", likeControllers.countAllPostsLike);

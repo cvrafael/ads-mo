@@ -21,7 +21,7 @@ module.exports = {
             
             const pix = await payment.create({
                 body: {
-                    transaction_amount: 0.01,
+                    transaction_amount: 49.90,
                     description: `Pagamento para o produto: ${postName}`,
                     payment_method_id: process.env.PIX,
                     payer: {

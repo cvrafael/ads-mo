@@ -1,6 +1,5 @@
 import axios from "axios"
 export async function postApiMercadoPago(email, idUser, postName) {
-  console.log('catch error')
     return await axios.post("http://localhost:3030/payment", {email: email, user_id: idUser, postName});
 }
 
@@ -12,7 +11,6 @@ export async function postApiUploadAds(newArrayObject) {
 }
 
 export async function getPaymentStatus(paymentId) {
-    console.log('paymentId apiNewAds',paymentId)
     return await axios.get(`https://api.mercadopago.com/v1/payments/${paymentId}`,{
         headers: {
           'Authorization': 'Bearer APP_USR-6743924456960489-050612-abc6032902b4eef1f1bc6feff4342b6c-421752700',

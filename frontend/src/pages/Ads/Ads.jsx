@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LikeOutlined, SyncOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import { Avatar, Card, Flex, Typography, Form, Tag } from 'antd';
+import { Avatar, Card, Flex, Typography, Form, Tag, Image } from 'antd';
 const { Link } = Typography;
 
 const { Meta } = Card;
@@ -57,14 +57,15 @@ const Ads = ({ idUser }) => {
   }, []);
 
   return (
-    <Flex gap={"middle"} vertical >
+    <Flex gap={"large"} wrap >
       {posts && posts.map((posts) => {
         return (
           <Card
             key={posts.id}
             cover={
-              <img
+              <Image
                 height={300}
+                width={739}
                 alt="example"
                 src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`}
               />

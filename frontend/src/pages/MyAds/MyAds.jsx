@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { EditOutlined, EllipsisOutlined, SettingOutlined, SyncOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Avatar, Card, Flex, Tag, Form, Typography } from 'antd';
+import { EllipsisOutlined , SyncOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Avatar, Card, Flex, Tag, Form, Typography, Alert, Button, Popover, Space } from 'antd';
+import { deletePost } from './apiMyAds';
 import axios from 'axios';
 const { Link } = Typography;
 
 const { Meta } = Card;
 const MyAds = ({ idUser }) => {
   const [myPosts, setMyPosts] = useState([]);
+  const [successAlert, setSuccessAlert] = useState(null);
+
+     const contentToDelete = (id) => {
+          const deleteMyPost = (id) => {
+              deletePost(id)
+              .then(()=> { 
+                  setSuccessAlert(<Alert message="Deleted with Success" type="success" />)
+              })
+              .catch((error) => setSuccessAlert(<Alert message={error.msg} type="warning" />))
+          }
+          return (
+              <Button style={{width: '100%'}} type='primary' onClick={()=>{deleteMyPost(id)}} danger>Delete</Button>
+  
+          )
+      };
 
   useEffect(() => {
     async function getAllMyPosts(idUser) {
@@ -16,11 +32,11 @@ const MyAds = ({ idUser }) => {
         })
     }
     getAllMyPosts(idUser);
-  }, [])
-
+  }, [successAlert])
 
   return (
     <Flex gap={"middle"} vertical >
+      {successAlert}
       {myPosts && myPosts.map((post) => {
         return (
           <Card
@@ -33,9 +49,12 @@ const MyAds = ({ idUser }) => {
               />
             }
             actions={[
-              <SettingOutlined key="setting" />,
-              <EditOutlined key="edit" />,
-              <EllipsisOutlined key="ellipsis" />,
+                <Flex justify='center'>
+                    <Popover content={contentToDelete(post.id)} title="Delete ad?" trigger="hover">
+                        <EllipsisOutlined key="ellipsis" />
+                    </Popover>
+
+                </Flex>
             ]}
           >
             <Meta

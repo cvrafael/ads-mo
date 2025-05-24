@@ -3,8 +3,8 @@ import axios from 'axios';
 import {dotenv} from 'dotenv';
 import { Link } from 'react-router';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Flex, Popconfirm } from 'antd';
-const AvatarCard = ({ logout, idUser, userFisrtName }) => {
+import { Avatar, Flex, Popover } from 'antd';
+const AvatarCard = ({ logout, idUser, userFirstName }) => {
   const [ avatar, setAvatar] = useState([])
   
   useEffect(()=>{
@@ -29,11 +29,11 @@ const AvatarCard = ({ logout, idUser, userFisrtName }) => {
 
   return (
     <>
-      <Popconfirm
+      <Popover
         placement="left"
-        title={userFisrtName}
-        description={description(logout)}
-        showCancel={false}
+        trigger="hover"
+        title={`${userFirstName}`}
+        content={description(logout)}
       >
         <Avatar
           src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}muonline.jpg`}
@@ -42,7 +42,7 @@ const AvatarCard = ({ logout, idUser, userFisrtName }) => {
           icon={<UserOutlined />}
         />
 
-      </Popconfirm>
+      </Popover>
 
     </>
 
