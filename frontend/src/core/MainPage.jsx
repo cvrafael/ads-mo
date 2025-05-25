@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ButtonNewAds from '../components/ButtonNewAds.jsx'
+import ButtonNewAds from '../components/ButtonNewAds/ButtonNewAds.jsx'
 import { Outlet, Link } from 'react-router';
 
 import {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SyncOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
-import {EmailValidated, EmailValidatedRepproved} from '../../components/Email/email';
+import {EmailValidated, EmailValidatedRepproved} from '../../components/Email/Email';
 import axios from 'axios';
 import { Avatar, Card, Flex, Typography, Form, Tag, Popover, Button, Space, Upload, Input, Alert } from 'antd';
 import { validationTheNewPost, updatePost } from './apiAdministrator';
