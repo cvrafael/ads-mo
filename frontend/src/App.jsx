@@ -24,7 +24,7 @@ const App = () => {
         <Route path="/profile" element={<Profile idUser={clients?.tokenParsed?.sub} />} />
         <Route path="/newads" element={<NewAds idUser={clients?.tokenParsed?.sub} userEmail={clients?.tokenParsed?.email} />} />
         <Route path="/premium" element={<PremiumAds idUser={clients?.tokenParsed?.sub} />} />
-        <Route path="/admin" element={<Administrator idUser={clients?.tokenParsed?.sub} />} />
+        <Route path="/admin" element={<Administrator idUser={clients?.tokenParsed?.sub} userEmail={clients?.tokenParsed?.email}  userFirstName={clients?.tokenParsed?.name}/>} />
         <Route path="/mercadopg" element={<PixMercadoPago userEmail={clients?.tokenParsed?.email}/>} />
         <Route path="/*" element={<NotExists />} />
       </Route>

@@ -251,7 +251,7 @@ const NewAds = ({ idUser, userEmail }) => {
               },
             ]}
           >
-            <Input.TextArea style={{ width: 300 }} />
+            <Input.TextArea style={{ width: 300 }} maxLength={70}/>
           </Form.Item>
 
           <Form.Item

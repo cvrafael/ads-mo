@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SyncOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
+import {EmailValidated, EmailValidatedRepproved} from '../../components/Email/email';
 import axios from 'axios';
 import { Avatar, Card, Flex, Typography, Form, Tag, Popover, Button, Space, Upload, Input, Alert } from 'antd';
 import { validationTheNewPost, updatePost } from './apiAdministrator';
@@ -7,31 +8,34 @@ const { Link } = Typography;
 
 const { Meta } = Card;
 
-const Administrator = ({ idUser }) => {
+const Administrator = ({ userFirstName, userEmail }) => {
     const [posts, setPosts] = useState([]);
     const [form] = Form.useForm();
     const monitClick = useRef();
     const [successAlert, setSuccessAlert] = useState('');
 
-    const contentToVerify = (id) => {
-        const ApproveAd = (id) => {
-            validationTheNewPost(id, 'approved')
+    const contentToVerify = (post) => {
+        const datasPost = {...post, userName:userFirstName, userEmail: userEmail};
+        const ApproveAd = () => {
+            validationTheNewPost(post.id, 'approved')
             .then(()=> { 
                 setSuccessAlert(<Alert message="Success Text" type="success" />)
+                EmailValidated(datasPost);
             })
             .catch((error) => setSuccessAlert(<Alert message={error.msg} type="warning" />))
         }
         const RepproveAd = () => {
-            validationTheNewPost(id, 'repproved')
+            validationTheNewPost(post.id, 'repproved')
             .then(()=> { 
                 setSuccessAlert(<Alert message='Repproved' type="warning" />)
+                EmailValidatedRepproved(datasPost);
             })
             .catch((error) => setSuccessAlert(<Alert message={error.msg} type="warning" />))
         }
         return (
         <Space>
-            <Button type='primary' onClick={()=>{ApproveAd(id)}} ref={monitClick} >Approve</Button>
-            <Button onClick={() => {RepproveAd()}}>Repprove</Button>
+            <Button type='primary' onClick={()=>{ApproveAd()}} ref={monitClick} >Approve</Button>
+            <Button onClick={() => {RepproveAd()}} ref={monitClick}>Repprove</Button>
         </Space>
 
         )
@@ -146,33 +150,33 @@ const Administrator = ({ idUser }) => {
     return (
         <Flex gap={"middle"} vertical >
             {posts.length == 0 ? successAlert: ""}
-            {posts && posts.map((posts) => {
+            {posts && posts.map((post) => {
                 return (
                     <Card
-                        key={posts.id}
+                        key={post.id}
                         cover={
                             <img
                                 height={300}
                                 alt="example"
-                                src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`}
+                                src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`}
                             />
                         }
                         actions={[
 
                             <Flex justify='space-around'>
-                                <Popover content={contentToVerify(posts.id)} title="Ads Verification" trigger="hover">
+                                <Popover content={contentToVerify(post)} title="Ads Verification" trigger="hover">
                                     <SettingOutlined key="setting" />
                                 </Popover>
-                                <Popover content={contentToEdit(posts.title, posts.website, posts.description)} trigger="hover">
+                                <Popover content={contentToEdit(post.title, post.website, post.description)} trigger="hover">
                                     <EditOutlined key="edit" />
                                 </Popover>
                             </Flex>
                         ]}
                     >
                                 <Meta
-                                    avatar={<Avatar src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`} />}
-                                    title={posts.title}
-                                    description={posts.description}
+                                    avatar={<Avatar src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`} />}
+                                    title={post.title}
+                                    description={post.description}
                                 />
                                 <Flex justify='space-between' vertical>
                                     <div >
@@ -182,12 +186,12 @@ const Administrator = ({ idUser }) => {
                                                 name={['user', 'website']}
                                                 label="Website"
                                             >
-                                                <Link href={`http://${posts.website}`} target="_blank">
-                                                    {posts.website}
+                                                <Link href={`http://${post.website}`} target="_blank">
+                                                    {post.website}
                                                 </Link>
                                             </Form.Item>
                                         </Form>
-                                        {posts.premium == true ?
+                                        {post.premium == true ?
                                         <Form>
                                              <Form.Item>
                                                <Tag style={{ maxWidth: 90, maxHeight: 20 }} icon={<SyncOutlined spin />} color="success">Premium</Tag>
@@ -195,13 +199,13 @@ const Administrator = ({ idUser }) => {
                                         </Form> : ""}
                                     </div>
                                     <div>
-                                        {posts.status == 'analysis' ?
+                                        {post.status == 'analysis' ?
                                         <Form>
                                              <Form.Item>
                                                <Tag style={{ maxWidth: 90, maxHeight: 20 }} icon={<SyncOutlined spin />} color="warning">Analysis</Tag>
                                              </Form.Item>
                                         </Form> : 
-                                        posts.status == 'repproved' ? <Tag style={{ maxWidth: 90, maxHeight: 20 }} icon={<SyncOutlined spin />} color="error">Repproved</Tag>:""}
+                                        post.status == 'repproved' ? <Tag style={{ maxWidth: 90, maxHeight: 20 }} icon={<SyncOutlined spin />} color="error">Repproved</Tag>:""}
                                     </div>
                                 </Flex>
                     </Card>
