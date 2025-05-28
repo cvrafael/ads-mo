@@ -7,8 +7,8 @@ const db = new Sequelize(
   process.env.PASSWORD,
   {
     host: process.env.HOST,
-    dialect: process.env.DIALECT, // ou 'mysql', 'sqlite', etc.
-    schema: process.env.SCHEMA,   // schema padrão
+    dialect: process.env.DIALECT,
+    schema: process.env.SCHEMA,
   }
 );
 

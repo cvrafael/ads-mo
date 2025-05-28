@@ -67,10 +67,10 @@ module.exports = {
               { type: QueryTypes.UPDATE }
             );
         
-          } catch (error) {
-            console.error('Erro ao processar webhook:', error);
-            res.status(500).send('Erro interno');
-          }
+        } catch (error) {
+          console.error('Erro ao processar webhook:', error);
+          res.status(500).send('Erro interno');
+        }
     },
     async verifyStatusPaymentWasApproved(req, res) {
        
@@ -110,7 +110,6 @@ module.exports = {
           }
         );
     
-        // Atualiza seu banco (opcional)
         await db.query(
           `UPDATE public.posts SET payment_status = 'cancelled' WHERE id_payment = '${paymentId}'`,
           { type: QueryTypes.UPDATE }

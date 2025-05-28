@@ -6,7 +6,6 @@ const postControllers = require("./controllers/postControllers/postControllers")
 const userControllers = require("./controllers/userControllers/userControllers");
 const likeControllers = require('./controllers/likeControllers/likeControllers');
 const pixController = require("./controllers/pixControllers/pixControllers");
-
 const upload = multer({storage});
 const router = Router();
 

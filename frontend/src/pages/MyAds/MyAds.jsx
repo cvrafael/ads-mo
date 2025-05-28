@@ -126,6 +126,12 @@ const MyAds = ({ idUser }) => {
                     <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<CloseCircleOutlined />} color="error">Repproved</Tag>
                   </Form.Item>
                 </Form> 
+                : post.status == 'expired' ? 
+                <Form> 
+                  <Form.Item>
+                    <Tag style={{ maxWidth: 90, maxHeight: 20 }}icon={<CloseCircleOutlined />} color="warning">Expired</Tag>
+                  </Form.Item>
+                </Form> 
                 : ""
                 }
               </div>

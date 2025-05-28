@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SyncOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons';
 import {EmailValidated, EmailValidatedRepproved} from '../../components/Email/Email';
-import axios from 'axios';
 import { Avatar, Card, Flex, Typography, Form, Tag, Popover, Button, Space, Upload, Input, Alert } from 'antd';
-import { validationTheNewPost, updatePost } from './apiAdministrator';
+import { validationTheNewPost, updatePost, getAllPosts } from './apiAdministrator';
 const { Link } = Typography;
 
 const { Meta } = Card;
@@ -15,7 +14,9 @@ const Administrator = ({ userFirstName, userEmail }) => {
     const [successAlert, setSuccessAlert] = useState('');
 
     const contentToVerify = (post) => {
+
         const datasPost = {...post, userName:userFirstName, userEmail: userEmail};
+
         const ApproveAd = () => {
             validationTheNewPost(post.id, 'approved')
             .then(()=> { 
@@ -24,6 +25,7 @@ const Administrator = ({ userFirstName, userEmail }) => {
             })
             .catch((error) => setSuccessAlert(<Alert message={error.msg} type="warning" />))
         }
+
         const RepproveAd = () => {
             validationTheNewPost(post.id, 'repproved')
             .then(()=> { 
@@ -32,17 +34,16 @@ const Administrator = ({ userFirstName, userEmail }) => {
             })
             .catch((error) => setSuccessAlert(<Alert message={error.msg} type="warning" />))
         }
+
         return (
         <Space>
             <Button type='primary' onClick={()=>{ApproveAd()}} ref={monitClick} >Approve</Button>
             <Button onClick={() => {RepproveAd()}} ref={monitClick}>Repprove</Button>
         </Space>
-
         )
     };
 
     const onFinish = async (values) => {
-        console.log(values)
         try {
             await updatePost(posts[0].id, values.title, values.description, values.website)
             .then((result)=> {console.log(result.statusText)})
@@ -134,18 +135,17 @@ const Administrator = ({ userFirstName, userEmail }) => {
     );
 };
 
-    async function getAllPosts() {
-        await axios.get('http://localhost:3030/posts-admin')
-            .then((result) => {
-                const resultStatusText = {...result, statusText: 'Dont have posts in the moment...'};
-                setPosts(result.data);
-                setSuccessAlert(<Alert message={resultStatusText.statusText} type="success" />)
-            })
+useEffect(() => {
+    async function getPosts() {
+        getAllPosts()
+        .then((result) => {
+            const resultStatusText = {...result, statusText: 'Dont have posts in the moment...'};
+            setPosts(result.data);
+            setSuccessAlert(<Alert message={resultStatusText.statusText} type="success" />)
+        })
     }
-
-    useEffect(() => {
-        getAllPosts();
-    }, [monitClick.current]);
+    getPosts();
+}, [monitClick.current]);
 
     return (
         <Flex gap={"middle"} vertical >
