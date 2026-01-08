@@ -9,7 +9,7 @@ const AvatarCard = ({ logout, idUser, userFirstName }) => {
   
   useEffect(()=>{
     async function findAvatar(idUser){
-      await axios.get(`http://localhost:3030/user/avatar/${idUser}`)
+      await axios.get(`http://localhost:3032/user/avatar/${idUser}`)
       .then((result)=>{
         setAvatar(result.data[0]);
       });
