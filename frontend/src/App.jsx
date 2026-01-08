@@ -1,6 +1,8 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { Routes, Route } from "react-router";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from "jwt-decode";
 import Main from "./core/MainPage.jsx";
 import Ads from "./pages/Ads/Ads.jsx";
 import MyAds from "./pages/MyAds/MyAds.jsx";
@@ -15,11 +17,21 @@ import Administrator from './pages/Administrator/Administrator.jsx';
 
 const App = () => {
   // const [isLogin, clients, isAdmin ] = useAuth();
+  const [oauthGoogle, setOauthGoogle] = useState([]);
+  console.log('datas',oauthGoogle)
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Routes>
-        <Route path="/" element={<Main />}>
+        <Route path="/" element={<Main GoogleLogin={
+                                                    <GoogleLogin 
+                                                      onSuccess={(credentialResponse)=>{
+                                                      console.log(credentialResponse)
+                                                      console.log('datas',setOauthGoogle(jwtDecode(credentialResponse.credential)))
+                                                    }}
+                                                    onError={()=> console.log("Login Failed!")}
+                                                    />} oauthGoogle={oauthGoogle.email_verified} />
+                                }>
           {/* <Route path="/" element={<Ads />} />
         <Route path="/ads" element={<Ads  />} />
         <Route path="/myads" element={<MyAds idUser={clients?.tokenParsed?.sub} />}/>
