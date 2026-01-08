@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import ButtonNewAds from '../components/ButtonNewAds/ButtonNewAds.jsx'
 import { Outlet, Link } from 'react-router';
+import { GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from "jwt-decode";
 
 import {
   PieChartOutlined,
@@ -10,7 +12,8 @@ import {
 import { Breadcrumb, Layout, Menu, theme, Flex, Image } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
-const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
+// const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
+const App = ({ isLogin=true }) => {
 
 function getItem(label, key, icon, children) {
   return {
@@ -23,12 +26,14 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
-  getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
+  isLogin? getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,): '',
   getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
-  isAdmin? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
+  // isAdmin? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
 
   const [collapsed, setCollapsed] = useState(false);
+  const [oauthGoogle, setOauthGoogle] = useState([]);
+  console.log('datas',oauthGoogle)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -37,7 +42,7 @@ const items = [
       style={{
         minHeight: '100vh',
       }}
-      token={token}
+      // token={token}
     >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
@@ -53,11 +58,19 @@ const items = [
             alignItems: 'center',
           }}
         >
-          <h1></h1>
+          
           <h1>Sejam Todos Bem-vindos</h1>
-          <Flex align='center'>
-          <ButtonNewAds />
-          {avatar}
+          <Flex align='center' gap={5}>
+            <ButtonNewAds />
+          
+          {/* {avatar} */}
+          <GoogleLogin 
+          onSuccess={(credentialResponse)=>{
+            console.log(credentialResponse)
+            console.log('datas',setOauthGoogle(jwtDecode(credentialResponse.credential)))
+          }}
+          onError={()=> console.log("Login Failed!")}
+          />
           </Flex>
         </Header>
         <Content
@@ -74,7 +87,8 @@ const items = [
                 title: 'User',
               },
               {
-                title: `${userEmail}`,
+                // title: `${userEmail}`,
+                title: `${oauthGoogle.email}`,
               },              
             ]}
           >
