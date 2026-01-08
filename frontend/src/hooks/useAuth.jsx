@@ -29,6 +29,7 @@ const useAuth = () => {
       const roles = client.tokenParsed?.realm_access?.roles || [];
       setIsAdmin(roles.includes('ads-mo-adm'));
       });
+      console.log(isAdmin)
   }, []);
 
   return [isLogin, clients, isAdmin];

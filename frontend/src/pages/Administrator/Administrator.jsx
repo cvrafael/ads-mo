@@ -158,7 +158,7 @@ useEffect(() => {
                             <img
                                 height={300}
                                 alt="example"
-                                src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`}
+                                src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}/${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mo.png`}
                             />
                         }
                         actions={[
@@ -174,7 +174,7 @@ useEffect(() => {
                         ]}
                     >
                                 <Meta
-                                    avatar={<Avatar src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`} />}
+                                    avatar={<Avatar src={post ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}/${post.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mo.png`} />}
                                     title={post.title}
                                     description={post.description}
                                 />

@@ -66,15 +66,15 @@ const Ads = ({ idUser }) => {
               <Image
                 height={300}
                 width={739}
-                alt="example"
-                src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`}
+                alt="img"
+                src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}/${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mo.png`}
               />
             }
           >
             <Flex justify='space-between'>
               <div>
                 <Meta
-                  avatar={<Avatar src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}mo.png`} />}
+                  avatar={<Avatar src={posts ? `${import.meta.env.VITE_STATIC_FILES_STORAGE}/${posts.image}` : `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mo.png`} />}
                   title={posts.title}
                   description={posts.description}
                 />

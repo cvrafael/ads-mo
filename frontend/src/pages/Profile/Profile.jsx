@@ -109,7 +109,7 @@ const Profile = ({idUser}) => {
         accept='.jpg'
         maxCount={1}
       >
-      <Avatar size={50} icon={<UserOutlined />} src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}mu-online-bk.jpeg`} />
+      <Avatar size={50} icon={<UserOutlined />} src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}/${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mu-online-bk.jpeg`} />
     </Upload>
 
     </Form.Item>

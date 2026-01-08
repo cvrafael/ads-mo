@@ -113,7 +113,7 @@ module.exports = {
           GROUP BY 
             pp.id, pp.title, pp.description, pp.image
           ORDER BY 
-            pp.timestamp ASC;
+            pp.created_at ASC;
         `, { type: QueryTypes.SELECT });
         
         if (!postsToValidation) {

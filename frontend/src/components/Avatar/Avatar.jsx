@@ -36,7 +36,7 @@ const AvatarCard = ({ logout, idUser, userFirstName }) => {
         content={description(logout)}
       >
         <Avatar
-          src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}muonline.jpg`}
+          src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}/${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}/muonline.jpg`}
           size={50}
           style={{ cursor: 'pointer', margin: '5px' }}
           icon={<UserOutlined />}
