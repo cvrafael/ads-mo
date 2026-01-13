@@ -13,7 +13,7 @@ import { Breadcrumb, Layout, Menu, theme, Flex, Image } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
 // const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
-const App = ({ GoogleLogin, oauthGoogle }) => {
+const App = ({ GoogleLogin }) => {
 
 function getItem(label, key, icon, children) {
   return {
@@ -26,8 +26,8 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
-  oauthGoogle? getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,): '',
-  oauthGoogle?getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,): '',
+  getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
+  getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
   // isAdmin? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
 
@@ -83,7 +83,7 @@ const items = [
               },
               {
                 // title: `${userEmail}`,
-                title: `${oauthGoogle ? oauthGoogle?.email: ''}`,
+                title: `${''}`,
               },              
             ]}
           >
