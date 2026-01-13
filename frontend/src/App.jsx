@@ -25,7 +25,7 @@ const App = () => {
 
      
       <Routes>
-        <Route path="/" element={<Main GoogleLogin={<GoogleLogin />} />
+        <Route path="/" element={<Main GoogleLogin={<GoogleLogin />}/>
                                 }>
           {/* <Route path="/" element={<Ads />} />
         <Route path="/ads" element={<Ads  />} />
