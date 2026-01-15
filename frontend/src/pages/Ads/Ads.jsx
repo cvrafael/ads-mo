@@ -33,19 +33,30 @@ const Ads = ({ idUser }) => {
 
     await axios.post('http://localhost:3030/user/like', {
       "fk_id_post": post.id,
-      "fk_id_user_entity": iduser
-    })
+      "fk_id_user": iduser
+    },
+        {
+            withCredentials: true
+        })
       .then((result) => {
         LikeValue.current = result.data[0].like;
       });
 
     if (LikeValue.current == 0) {
-      const arrayTheObjects = { "like": 1, 'fk_id_user_entity': iduser, 'fk_id_post': post.id };
-      await axios.post('http://localhost:3030/like', arrayTheObjects
+      const arrayTheObjects = { "like": 1, 'fk_id_user': iduser, 'fk_id_post': post.id };
+      await axios.post('http://localhost:3030/like', arrayTheObjects, 
+        
+        {
+            withCredentials: true
+        }
+      
       );
     } else if (LikeValue.current == 1) {
-      const arrayTheObjects = { "like": 0, 'fk_id_user_entity': iduser, 'fk_id_post': post.id };
-      await axios.post('http://localhost:3030/like', arrayTheObjects
+      const arrayTheObjects = { "like": 0, 'fk_id_user': iduser, 'fk_id_post': post.id };
+      await axios.post('http://localhost:3030/like', arrayTheObjects,
+        {
+            withCredentials: true
+        }
       );
     }
     countLikeUpdated(post, posts);

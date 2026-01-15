@@ -1,10 +1,8 @@
 const { Router } = require("express");
-require("dotenv").config;
+require("dotenv").config();
 const multer = require('multer');
 const {storage} = require('./multer/multer');
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
-
+const jwt = require("jsonwebtoken")
 const postControllers = require("./controllers/postControllers/postControllers");
 const userControllers = require("./controllers/userControllers/userControllers");
 const likeControllers = require('./controllers/likeControllers/likeControllers');
@@ -12,21 +10,37 @@ const pixController = require("./controllers/pixControllers/pixControllers");
 const upload = multer({storage});
 const router = Router();
 
-const users = [];
+const JWT_SECRET = process.env.JWT_SECRET
 
-function upsert(array, item) {
-  const i = array.findIndex((_item) => _item.email === item.email);
-  if (i > -1) array[i] = item;
-  else array.push(item);
+function authMiddleware(req, res, next) {
+  const token = req.cookies.session;
+  if (!token) return res.sendStatus(401)
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET)
+        req.user = decoded
+    next()
+  } catch {
+    if (res.status(401).json({ error })) return ;
+  }
 }
 
-router.post('/api/google-login', userControllers.createUser);
-
 //Users routes
-router.get("/user/:id_sub", userControllers.findOneUser);
-router.get("/users",  userControllers.findAllUsers);
-router.post("/avatar", upload.single('avatar'), userControllers.createAvatar);
-router.get("/user/avatar/:id_sub", userControllers.findAvatar);
+router.post('/api/google-login', userControllers.create_user);
+router.get('/api/me', authMiddleware, userControllers.find_one_user);
+router.post('/api/logout', (req, res) => {
+  res.clearCookie('session', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false, // localhost
+    path: '/'
+  });
+
+  return res.json({ ok: true });
+});
+router.get("/users",  userControllers.find_all_users);
+router.post("/avatar", upload.single('avatar'), userControllers.create_avatar);
+router.get("/user/avatar/:id_sub", userControllers.find_avatar);
 router.get("/user/isadmin/:id_sub", userControllers.is_admin);
 //Posts routes
 router.post("/uploads", upload.single('file'), postControllers.createPost);
@@ -37,8 +51,9 @@ router.get("/posts/premium", postControllers.findAllPremiumPosts);
 router.put("/post-validation/:id", postControllers.updateToValidationPost);
 router.put("/post-update/:id", postControllers.updatePost);
 router.delete("/post-delete/:id", postControllers.deletePost);
+
 //Likes routes
-router.post("/like", likeControllers.giveALike);
+router.post("/like", authMiddleware, likeControllers.giveALike);
 router.get("/count/like/:id", likeControllers.countAllPostsLike);
 router.post("/user/like", likeControllers.countLikeByUser);
 //Pix Payment

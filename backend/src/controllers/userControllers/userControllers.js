@@ -1,45 +1,68 @@
 const { db } = require("../../config/database");
 const { QueryTypes } = require('sequelize');
 const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken')
+
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+const JWT_SECRET = process.env.JWT_SECRET
 
 module.exports = {
-  async createUser(req, res) {
-    const users = [];
-    try {
-      function upsert(array, item) {
-        const i = array.findIndex((_item) => _item.email === item.email);
-        if (i > -1) array[i] = item;
-        else array.push(item);
-      }
+ async create_user(req, res) {
+  try {
+    const { token } = req.body;
 
-      await db.authenticate();
-      const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+    });
 
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.CLIENT_ID,
-      });
+    const { sub, email, email_verified, family_name, given_name, name, picture } =
+      ticket.getPayload();
 
-      const { sub, email, email_verified, family_name, given_name, name } = ticket.getPayload();
-      upsert(users, { sub, email, email_verified, family_name, given_name, name });
-      const create_user = await db.query(
-        `INSERT INTO public.user ("id_sub", "email", "email_verified", "family_name", "given_name", "name")
-          VALUES ('${sub}', '${email}', '${email_verified}', '${family_name}', '${given_name}', '${name}')
-          ON CONFLICT (id_sub) DO NOTHING;`,
-        { type: QueryTypes.INSERT });
+    const sessionToken = jwt.sign(
+      { userId: sub },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
-      console.log(create_user);
+    // 🔥 COOKIE SEMPRE ANTES DO RETURN
+    res.cookie('session', sessionToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/'
+    });
 
-      res.status(200).json(create_user);
+    const user = await db.query(
+      `SELECT * FROM public.user WHERE "id_sub" = '${sub}'`,
+      { type: QueryTypes.SELECT }
+    );
 
-    } catch (error) {
+    if (!user[0]) {
+      await db.query(
+        `INSERT INTO public.user ("id_sub", "email", "email_verified", "family_name", "given_name", "name", "picture")
+         VALUES ('${sub}', '${email}', '${email_verified}', '${family_name}', '${given_name}', '${name}', '${picture}')
+         ON CONFLICT (id_sub) DO NOTHING`,
+        { type: QueryTypes.INSERT }
+      );
 
-      res.status(400).json({ error });
-      console.log(error);
+      const createdUser = await db.query(
+        `SELECT * FROM public.user WHERE "id_sub" = '${sub}'`,
+        { type: QueryTypes.SELECT }
+      );
 
+      return res.status(201).json(createdUser);
     }
-  },
+
+    // 🔥 FALTAVA ISSO
+    return res.status(200).json(user);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ error: 'Erro ao autenticar' });
+  }
+},
   async is_admin(req, res) {
     try {
 
@@ -64,7 +87,7 @@ module.exports = {
 
     }
   },
-  async findAllUsers(req, res) {
+  async find_all_users(req, res) {
     try {
 
       await db.authenticate();
@@ -76,33 +99,31 @@ module.exports = {
 
       console.log(users);
 
-      res.status(200).json(users);
+    return  res.status(200).json(users);
 
     } catch (error) {
 
-      res.status(400).json({ error });
-      console.log(error);
+    return  res.status(400).json({ error });
 
     }
   },
-  async findOneUser(req, res) {
+  async find_one_user(req, res) {
     try {
-      await db.authenticate();
-      const { id_sub } = req.params;
+      const userId = req.user.userId;
 
-      const allUsers = await db.query(
-        `SELECT "id_sub", "email", "email_verified", "family_name", "given_name", "name"
-	        FROM public.user where id_sub = '${id_sub}';`,
-        { type: QueryTypes.SELECT });
-      console.log(allUsers);
-      res.status(200).json(allUsers);
+    const user = await db.query(
+      `SELECT id_sub, email, name, picture FROM public.user WHERE id_sub = '${userId}'`,
+    { type: QueryTypes.SELECT }
+  );
+
+  return res.status(200).json(user[0]);
     } catch (error) {
-      res.status(400).json({ error });
       console.log(error);
+      return res.status(400).json({ error });
     }
   },
 
-  async createAvatar(req, res) {
+  async create_avatar(req, res) {
     try {
 
       await db.authenticate();
@@ -128,7 +149,7 @@ module.exports = {
     }
   },
 
-  async findAvatar(req, res) {
+  async find_avatar(req, res) {
     try {
 
       await db.authenticate();

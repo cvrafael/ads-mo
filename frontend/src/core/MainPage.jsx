@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import ButtonNewAds from '../components/ButtonNewAds/ButtonNewAds.jsx'
 import { Outlet, Link } from 'react-router';
-
-
 
 import {
   PieChartOutlined,
@@ -13,8 +10,7 @@ import { Breadcrumb, Layout, Menu, theme, Flex, Image } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
 // const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
-const App = ({ GoogleLogin }) => {
-
+const App = ({ GoogleLogin, datas, admin, ButtonNewAds }) => {
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -28,7 +24,7 @@ const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
   getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
   getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
-  // isAdmin? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
+  admin ? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -61,7 +57,7 @@ const items = [
           
           <h1>Sejam Todos Bem-vindos</h1>
           <Flex align='center' gap={5}>
-            <ButtonNewAds />
+            {datas? ButtonNewAds: ''}
           
           {/* {avatar} */}
           {GoogleLogin}
@@ -83,7 +79,7 @@ const items = [
               },
               {
                 // title: `${userEmail}`,
-                title: `${''}`,
+                title: `${datas ? datas?.email : ''}`,
               },              
             ]}
           >

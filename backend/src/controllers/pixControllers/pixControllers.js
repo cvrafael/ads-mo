@@ -2,7 +2,7 @@ const {db} = require("../../config/database");
 const { QueryTypes } = require('sequelize');
 const { Payment, MercadoPagoConfig } = require('mercadopago');
 const axios = require('axios');
-const { uuid } = require('uuidv4');
+const {uuidv4} = require('uuid');
 require("dotenv").config;
 const client = new MercadoPagoConfig({
     accessToken: process.env.ACCESS_TOKEN_MP,
@@ -32,7 +32,7 @@ module.exports = {
                       }
                 },
                 requestOptions: {
-                    idempotencyKey: uuid(),
+                    idempotencyKey: uuidv4,
                   },
             })
             .then(console.log((result)=> console.log(result))).catch(console.error);
@@ -79,10 +79,10 @@ module.exports = {
             const [verifyPaymentStatys] = await db.query(`
                 SELECT payment_status FROM public.posts 
                 WHERE id_payment = '${id_payment}'
-                ORDER BY timestamp DESC 
+                ORDER BY created_at DESC 
                 LIMIT 1;
               `, { type: QueryTypes.SELECT });
-              console.log(verifyPaymentStatys);
+              console.log('verifyPaymentStatys',verifyPaymentStatys);
               if (verifyPaymentStatys && verifyPaymentStatys.payment_status == 'approved') {
                 return res.status(200).json(verifyPaymentStatys.payment_status);
               }else if (verifyPaymentStatys && verifyPaymentStatys.payment_status == 'cancelled') {

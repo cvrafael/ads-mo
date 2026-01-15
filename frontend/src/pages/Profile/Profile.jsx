@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Avatar, Upload } from 'antd';
+import { recoveryUser } from '../Login/apiNewLogin';
 
 const Profile = ({idUser}) => {
   const [user, setUser]= useState([]); 
@@ -31,7 +32,7 @@ const Profile = ({idUser}) => {
     const newArrayObject = {
           'avatar': values.avatar.image.file,  
           'image': values.avatar.image.file.name,
-          'fk_id_user_entity': idUser,
+          'fk_id_user': idUser,
         }
         try {
           await axios.post(`http://localhost:3030/avatar`, newArrayObject, {
@@ -45,19 +46,23 @@ const Profile = ({idUser}) => {
   }; 
   
   useEffect(()=>{
-    async function findOneUser(idUser){
-      await axios.get(`http://localhost:3030/user/${idUser}`)
-      .then((result)=>{
-        setUser(result.data[0]);
-      });
-    }
-    async function findAvatar(idUser){
+    async function findOneUser(){
+       await recoveryUser()
+          .then(res => {
+            console.log('refresh res.data',res.data)
+            setUser(res.data);
+            
+          }
+        )
+   }
+    
+     async function findAvatar(idUser){
       await axios.get(`http://localhost:3030/user/avatar/${idUser}`)
-      .then((result)=>{
-        setAvatar(result.data[0]);
+      .then((res)=>{
+        setAvatar(res.data[0]);
       });
     }
-    findOneUser(idUser);
+    findOneUser();
     findAvatar(idUser);
   }, []);
 
@@ -68,15 +73,15 @@ const Profile = ({idUser}) => {
     fields={[
       {
         name: ["first_name"],
-        value: user.first_name,
+        value: user?.name,
       },
       {
         name: ["last_name"],
-        value: user.last_name,
+        value: user?.family_name,
       },
       {
         name: ["email"],
-        value: user.email,
+        value: user?.email,
       }
     ]}
     name="nest-messages"
@@ -109,13 +114,13 @@ const Profile = ({idUser}) => {
         accept='.jpg'
         maxCount={1}
       >
-      <Avatar size={50} icon={<UserOutlined />} src={avatar?`${import.meta.env.VITE_STATIC_FILES_STORAGE}/${avatar.image}`: `${import.meta.env.VITE_STATIC_FILES_STORAGE}/mu-online-bk.jpeg`} />
+      <Avatar icon={<UserOutlined />} src={user?`${user?.picture}`: ''} />
     </Upload>
 
     </Form.Item>
     <Form.Item
       name={['first_name']}
-      label="First Name"
+      label="Name"
       rules={[
         {
           required: true,
