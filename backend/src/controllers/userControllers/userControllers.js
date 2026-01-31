@@ -112,7 +112,7 @@ module.exports = {
       const userId = req.user.userId;
 
     const user = await db.query(
-      `SELECT id_sub, email, name, picture FROM public.user WHERE id_sub = '${userId}'`,
+      `SELECT id_sub, email, name, family_name, picture FROM public.user WHERE id_sub = '${userId}'`,
     { type: QueryTypes.SELECT }
   );
 
