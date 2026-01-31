@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ButtonNewAds from '../components/ButtonNewAds/ButtonNewAds.jsx'
 import { Outlet, Link } from 'react-router';
 
 import {
@@ -10,8 +9,8 @@ import {
 import { Breadcrumb, Layout, Menu, theme, Flex, Image } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 
-const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
-
+// const App = ({ avatar, isLogin, token, userEmail, isAdmin }) => {
+const App = ({ GoogleLogin, datas, admin, ButtonNewAds }) => {
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -25,19 +24,21 @@ const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
   getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
   getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
-  isAdmin? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
+  admin ? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",
 ];
 
   const [collapsed, setCollapsed] = useState(false);
+  // const [oauthGoogle, setOauthGoogle] = useState([]);
+  // console.log('datas',oauthGoogle)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  return isLogin ?
+  return (
     <Layout
       style={{
         minHeight: '100vh',
       }}
-      token={token}
+      // token={token}
     >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
@@ -53,11 +54,14 @@ const items = [
             alignItems: 'center',
           }}
         >
-          <h1></h1>
+          
           <h1>Sejam Todos Bem-vindos</h1>
-          <Flex align='center'>
-          <ButtonNewAds />
-          {avatar}
+          <Flex align='center' gap={5}>
+            {datas? ButtonNewAds: ''}
+          
+          {/* {avatar} */}
+          {GoogleLogin}
+          
           </Flex>
         </Header>
         <Content
@@ -74,7 +78,8 @@ const items = [
                 title: 'User',
               },
               {
-                title: `${userEmail}`,
+                // title: `${userEmail}`,
+                title: `${datas ? datas?.email : ''}`,
               },              
             ]}
           >
@@ -99,10 +104,11 @@ const items = [
         </Footer>
       </Layout>
     </Layout>
-  : <Image   
-      preview={false}
-      width={150}
-      alt="Blade Knight" 
-      src={`${import.meta.env.VITE_STATIC_FILES_STORAGE}/bk02.gif`} />;
+  // : <Image   
+  //     preview={false}
+  //     width={150}
+  //     alt="Blade Knight" 
+  //     src={`${import.meta.env.VITE_STATIC_FILES_STORAGE}/bk02.gif`} />
+  )
 };
 export default App;

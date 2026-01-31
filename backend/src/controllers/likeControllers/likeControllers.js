@@ -5,13 +5,13 @@ module.exports = {
   async giveALike(req, res) {
     try {
       await db.authenticate();
-      const { like, fk_id_user_entity, fk_id_post } = req.body;
+      const { like, fk_id_user, fk_id_post } = req.body;
 
     
         const giveLike = await db.query(
-          `INSERT INTO public.like ("like", "fk_id_user_entity", "fk_id_post")
-                VALUES ('${like}', '${fk_id_user_entity}', '${fk_id_post}')
-                ON CONFLICT (fk_id_user_entity, fk_id_post) DO UPDATE 
+          `INSERT INTO public.like ("like", "fk_id_user", "fk_id_post")
+                VALUES ('${like}', '${fk_id_user}', '${fk_id_post}')
+                ON CONFLICT (fk_id_user, fk_id_post) DO UPDATE 
                 SET "like" = EXCLUDED.like;`,
           { type: QueryTypes.INSERT }
         );
@@ -57,18 +57,18 @@ module.exports = {
   async countLikeByUser(req, res) {
     try {
       await db.authenticate();
-      const { fk_id_post, fk_id_user_entity } = req.body;
+      const { fk_id_post, fk_id_user } = req.body;
 
       const countLike = await db.query(
         `SELECT 
           CASE 
             WHEN EXISTS (
               SELECT "like" FROM public.like 
-              WHERE fk_id_user_entity = '${fk_id_user_entity}' 
+              WHERE fk_id_user = '${fk_id_user}' 
               AND fk_id_post = '${fk_id_post}'
             ) THEN (
               SELECT "like" FROM public.like 
-              WHERE fk_id_user_entity = '${fk_id_user_entity}' 
+              WHERE fk_id_user = '${fk_id_user}' 
               AND fk_id_post = '${fk_id_post}'
             )
             ELSE '0'

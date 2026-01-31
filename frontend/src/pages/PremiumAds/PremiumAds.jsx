@@ -3,18 +3,12 @@ import { LikeOutlined, SyncOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { Avatar, Card, Flex, Typography, Tag, Form } from 'antd';
 const { Link } = Typography;
+import {getAllPremiumPosts} from './apiPremiumAds';
 
 const { Meta } = Card;
 const PremiumAds = ({ idUser }) => {
     const [posts, setPosts] = useState([]);
     const LikeValue = useRef();
-
-    async function getAllPremiumPosts() {
-        await axios.get('http://localhost:3030/posts/premium')
-            .then((result) => {
-                setPosts(result.data);
-            });
-    }
 
     async function countLikeUpdated(post, posts) {
         await axios.get(`http://localhost:3030/count/like/${post.id}`)
@@ -53,7 +47,10 @@ const PremiumAds = ({ idUser }) => {
     }
 
     useEffect(() => {
-        getAllPremiumPosts();
+        getAllPremiumPosts()
+        .then((result) => {
+            setPosts(result.data);
+        });
     }, [LikeValue.current]);
 
     return (

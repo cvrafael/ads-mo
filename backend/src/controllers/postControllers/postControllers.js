@@ -6,7 +6,7 @@ module.exports = {
     try {
       await db.authenticate();
       // const { id } = req.params;
-      const { title, description, image, fk_id_user_entity, premium, website, payment_status, id_payment, status } = req.body;
+      const { title, description, image, fk_id_user, premium, website, payment_status, id_payment, status } = req.body;
 
       const img = await db.query(
         `SELECT image
@@ -22,7 +22,7 @@ module.exports = {
         res.status(400).json("Ops... already exists a image or title with this name. Try again.");
       } else {
         const posts = await db.query(
-        `INSERT INTO "public"."posts" ("title","description","image","fk_id_user_entity", "premium", "website", "payment_status", "id_payment", "status") VALUES ('${title}','${description}','${image}','${fk_id_user_entity}', '${premium}', '${website}', '${payment_status}', '${id_payment}', '${status}');`,
+        `INSERT INTO "public"."posts" ("title","description","image","fk_id_user", "premium", "website", "payment_status", "id_payment", "status") VALUES ('${title}','${description}','${image}','${fk_id_user}', '${premium}', '${website}', '${payment_status}', '${id_payment}', '${status}');`,
         { type: QueryTypes.INSERT });
         res.status(200).json(posts);
       }
@@ -128,13 +128,13 @@ module.exports = {
   async findUserPosts(req, res) {
     try {
       await db.authenticate();
-      const { id } = req.params;
+      const { id_sub } = req.params;
 
       const userAllPosts = await db.query(
-        `SELECT pp.id, pp.title, pp.description, pp.image, pp.fk_id_user_entity, pp."timestamp", pp.website, pp.payment_status, pp.status FROM public.posts as pp
-          JOIN public.user_entity as pue
-          on pp.fk_id_user_entity = pue.id
-          WHERE pue.id = '${id}';`,
+        `SELECT pp.id, pp.title, pp.description, pp.image, pp.fk_id_user, pp.created_at, pp.website, pp.payment_status, pp.status FROM public.posts as pp
+          JOIN public.user as pu
+          on pp.fk_id_user = pu.id_sub
+          WHERE pp.fk_id_user = '${id_sub}';`,
           { type: QueryTypes.SELECT });
 
       res.status(200).json(userAllPosts);

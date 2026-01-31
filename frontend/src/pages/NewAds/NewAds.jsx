@@ -111,7 +111,7 @@ const NewAds = ({ idUser, userEmail }) => {
     const newArrayObject = {
       ...values.user,
       image: values.user.image.file.name,
-      fk_id_user_entity: idUser,
+      fk_id_user: idUser,
       file: values.user.image.file,
       premium: checked,
       website: values.user.website,
@@ -259,7 +259,7 @@ const NewAds = ({ idUser, userEmail }) => {
             label="Ad Premium"
             valuePropName="premium"
           >
-            <Checkbox onChange={showPixArea}/>
+            <Checkbox onChange={showPixArea} disabled={true} />
           </Form.Item>
 
           <Form.Item label={null}>
