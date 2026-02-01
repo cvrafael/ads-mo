@@ -1,4 +1,4 @@
-const {db} = require("../../config/database");
+const {db} = require("../../../config/config");
 const { QueryTypes } = require('sequelize');
 const { Payment, MercadoPagoConfig } = require('mercadopago');
 const axios = require('axios');
