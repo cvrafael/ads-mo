@@ -53,7 +53,8 @@ router.put("/post-update/:id", postControllers.updatePost);
 router.delete("/post-delete/:id", postControllers.deletePost);
 
 //Likes routes
-router.post("/like", authMiddleware, likeControllers.giveALike);
+// router.post("/like", authMiddleware, likeControllers.giveALike);
+router.post("/like", likeControllers.giveALike);
 router.get("/count/like/:id", likeControllers.countAllPostsLike);
 router.post("/user/like", likeControllers.countLikeByUser);
 //Pix Payment

@@ -1,21 +1,18 @@
-const {db} = require("../../../config/config");
-const { QueryTypes } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
+const { Like, User, Avatar } = require('../../../models/index.js');
 
 module.exports = {
   async giveALike(req, res) {
     try {
-      await db.authenticate();
       const { like, fk_id_user, fk_id_post } = req.body;
 
-    
-        const giveLike = await db.query(
-          `INSERT INTO public.like ("like", "fk_id_user", "fk_id_post")
-                VALUES ('${like}', '${fk_id_user}', '${fk_id_post}')
-                ON CONFLICT (fk_id_user, fk_id_post) DO UPDATE 
-                SET "like" = EXCLUDED.like;`,
-          { type: QueryTypes.INSERT }
-        );
-        res.status(200).json(giveLike);
+      const giveLike = await Like.upsert({
+        like,
+        fk_id_user,
+        fk_id_post,
+      });
+
+      res.status(200).json(giveLike);
 
     } catch (error) {
       res.status(400).json({ error });
@@ -24,14 +21,17 @@ module.exports = {
   },
   async countPostsLike(req, res) {
     try {
-      await db.authenticate();
       const { id } = req.params;
 
-      const coutLikes = await db.query(
-        `SELECT count(like) FROM public.like WHERE id = '${id}';`,
-        { type: QueryTypes.SELECT })
+      const countLikes = await Like.count({
+        where: {
+          id: {
+            [Op.gt]: id
+          }
+        }
+      })
 
-      res.status(200).json(coutLikes);
+      res.status(200).json(countLikes);
     } catch (error) {
       res.status(400).json({ error });
     }
@@ -39,42 +39,46 @@ module.exports = {
 
   async countAllPostsLike(req, res) {
     try {
-      await db.authenticate();
+
       const { id } = req.params;
 
-      const allLikes = await db.query(
-        `SELECT COUNT(CASE WHEN pl.like != '0' THEN '1' END) AS like
-          FROM public.like as pl
-          where pl.fk_id_post = '${id}';`,
-        { type: QueryTypes.SELECT })
+      const allLikes = await Like.findOne({
+        attributes: [
+          [
+            Sequelize.fn(
+              'COUNT',
+              Sequelize.literal(`CASE WHEN "like" <> '0' THEN 1 END`)
+            ),
+            'like',
+          ],
+        ],
+        where: {
+          fk_id_post: id,
+        },
+        raw: true,
+      });
 
       res.status(200).json(allLikes);
     } catch (error) {
       res.status(400).json({ error });
+      console.log('Erro ao dar like', error)
     }
   },
 
   async countLikeByUser(req, res) {
     try {
-      await db.authenticate();
       const { fk_id_post, fk_id_user } = req.body;
 
-      const countLike = await db.query(
-        `SELECT 
-          CASE 
-            WHEN EXISTS (
-              SELECT "like" FROM public.like 
-              WHERE fk_id_user = '${fk_id_user}' 
-              AND fk_id_post = '${fk_id_post}'
-            ) THEN (
-              SELECT "like" FROM public.like 
-              WHERE fk_id_user = '${fk_id_user}' 
-              AND fk_id_post = '${fk_id_post}'
-            )
-            ELSE '0'
-          END AS "like";`,
-        { type: QueryTypes.SELECT })
-        console.log(countLike)
+      const record = await Like.findOne({
+        attributes: ['like'],
+        where: {
+          fk_id_user,
+          fk_id_post,
+        },
+        raw: true,
+      });
+
+      const countLike = record?.like ?? '0';
 
       res.status(200).json(countLike);
     } catch (error) {
