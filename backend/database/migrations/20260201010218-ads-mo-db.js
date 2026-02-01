@@ -14,6 +14,8 @@ module.exports = {
           },
           id_sub: {
             type: Sequelize.STRING,
+            allowNull: false,
+            unique: true,
           },
           email: {
             type: Sequelize.STRING,
@@ -166,7 +168,7 @@ module.exports = {
             type: Sequelize.TIME,
             allowNull: false,
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-          }
+          },
           
         }
       
