@@ -1,4 +1,4 @@
-const { db } = require("../../config/database");
+const {db} = require("../../../config/config");
 const { QueryTypes } = require('sequelize');
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken')

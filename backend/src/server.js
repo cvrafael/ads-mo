@@ -4,7 +4,6 @@ const path = require('path');
 require("dotenv").config();
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
-const { testConnection } = require("./config/database");
 
 const app = express();
 
@@ -16,7 +15,7 @@ app.use(cors({
     credentials: true
 }))
 
-require("./config/database");
+require("../config/config.js");
 
 // app.use(express.static('public/uploads'))
 app.use(express.json());
@@ -28,6 +27,5 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, HOST, () => {
     console.log(`Serving on HOST ${HOST} and port: ${PORT}`);
-    testConnection();
 }
 )
