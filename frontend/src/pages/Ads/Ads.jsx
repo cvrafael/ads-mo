@@ -21,7 +21,7 @@ const Ads = ({ idUser }) => {
       .then((result) => {
         const newLike = posts.map((obj) => {
           if (obj.id === post.id) {
-            return { ...obj, "like": result.data[0].like };
+            return { ...obj, "like": result.data.like };
           }
           return obj;
         });
@@ -39,7 +39,7 @@ const Ads = ({ idUser }) => {
             withCredentials: true
         })
       .then((result) => {
-        LikeValue.current = result.data[0].like;
+        LikeValue.current = result.data;
       });
 
     if (LikeValue.current == 0) {
