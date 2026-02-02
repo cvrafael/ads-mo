@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import { Routes, Route } from "react-router";
+import { Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider, useGoogleOneTapLogin } from "@react-oauth/google";
 import GoogleLogin from './pages/Login/Login.jsx'
 import {jwtDecode} from "jwt-decode";
@@ -17,33 +17,41 @@ import PixMercadoPago from './components/PixMercadoPago/PixMercadoPago.jsx';
 import Administrator from './pages/Administrator/Administrator.jsx';
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const App = () => {
-    const [datas, setDatas] = useState(null);
-    const [admin, setAdmin] = useState(null);
+  const [datas, setDatas] = useState(null);
+  const [admin, setAdmin] = useState(null);
 
-    const actions = {
+  const actions = {
     receiveDatas: (apiDatas) => setDatas(apiDatas),
-    isAdmin: (apiAdmin) =>  setAdmin(apiAdmin),
+    isAdmin: (apiAdmin) => setAdmin(apiAdmin),
   };
 
   return (
-     <GoogleOAuthProvider clientId={clientId}>     
+    <GoogleOAuthProvider clientId={clientId}>
       <Routes>
-        <Route path="/" element={<Main GoogleLogin={<GoogleLogin actions={actions} />} datas={datas} admin={admin?.is_admin} ButtonNewAds={<ButtonNewAds/>}/>
-                                }>
-        <Route path="/" element={<Ads idUser={datas?.id_sub} />} />
-        <Route path="/ads" element={<Ads idUser={datas?.id_sub} />} />
-        <Route path="/myads" element={<MyAds idUser={datas?.id_sub} />}/>
-        <Route path="/profile" element={<Profile idUser={datas?.id_sub} />} />
-        <Route path="/newads" element={<NewAds idUser={datas?.id_sub} userEmail={datas?.email} />} />
-        <Route path="/premium" element={<PremiumAds idUser={datas?.id_sub} />} />
-        <Route path="/admin" element={<Administrator idUser={datas?.id_sub} userEmail={datas?.email}  userFirstName={datas?.name}/>} />
-        <Route path="/mercadopg" element={<PixMercadoPago userEmail={datas?.email}/>} />
-          <Route path="/*" element={<NotExists />} />
+        <Route
+          path="/"
+          element={
+            <Main
+              GoogleLogin={<GoogleLogin actions={actions} />}
+              datas={datas}
+              admin={admin?.is_admin}
+              ButtonNewAds={<ButtonNewAds />}
+            />
+          }
+        >
+          <Route index element={<Ads idUser={datas?.id_sub} />} />
+          <Route path="ads" element={<Ads idUser={datas?.id_sub} />} />
+          <Route path="myads" element={<MyAds idUser={datas?.id_sub} />} />
+          <Route path="profile" element={<Profile idUser={datas?.id_sub} />} />
+          <Route path="newads" element={<NewAds idUser={datas?.id_sub} userEmail={datas?.email} />} />
+          <Route path="premium" element={<PremiumAds idUser={datas?.id_sub} />} />
+          <Route path="admin" element={<Administrator idUser={datas?.id_sub} userEmail={datas?.email} userFirstName={datas?.name} />} />
+          <Route path="mercadopg" element={<PixMercadoPago userEmail={datas?.email} />} />
+          <Route path="*" element={<NotExists />} />
         </Route>
       </Routes>
-      </GoogleOAuthProvider>
-    
-  )
-}
+    </GoogleOAuthProvider>
+  );
+};
 
 export default App

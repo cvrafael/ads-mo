@@ -12,22 +12,26 @@ const Ads = ({ idUser }) => {
   async function getAllPosts() {
     await axios.get(`${import.meta.env.VITE_API_BACKEND}posts`)
       .then((result) => {
+        console.log('result', result.data)
         setPosts(result.data);
       });
   }
 
-  async function countLikeUpdated(post, posts) {
-    await axios.get(`${import.meta.env.VITE_API_BACKEND}count/like/${post.id}`)
-      .then((result) => {
-        const newLike = posts && posts.map((obj) => {
-          if (obj.id === post.id) {
-            return { ...obj, "like": result.data.like };
-          }
-          return obj;
-        });
-        setPosts(newLike);
-      });
-  }
+  async function countLikeUpdated(post) {
+  const result = await axios.get(
+    `${import.meta.env.VITE_API_BACKEND}count/like/${post.id}`
+  );
+
+  setPosts(prevPosts =>
+    Array.isArray(prevPosts)
+      ? prevPosts.map(obj =>
+          obj.id === post.id
+            ? { ...obj, like: result.data.like }
+            : obj
+        )
+      : []
+  );
+}
 
   async function giveLike(post, iduser) {
 
@@ -59,13 +63,14 @@ const Ads = ({ idUser }) => {
         }
       );
     }
-    countLikeUpdated(post, posts);
+    countLikeUpdated(post);
 
   }
 
   useEffect(() => {
     getAllPosts();
   }, []);
+  console.log('RENDER posts:', posts, Array.isArray(posts));
 
   return (
     <Flex gap={"large"} wrap >
