@@ -13,7 +13,7 @@ const PremiumAds = ({ idUser }) => {
     async function countLikeUpdated(post, posts) {
         await axios.get(`http://localhost:3030/count/like/${post.id}`)
             .then((result) => {
-                const newLike = posts.map((obj) => {
+                const newLike = posts && posts.map((obj) => {
                     if (obj.id === post.id) {
                         return { ...obj, "like": result.data[0].like };
                     }

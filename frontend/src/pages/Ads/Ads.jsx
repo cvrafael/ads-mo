@@ -19,7 +19,7 @@ const Ads = ({ idUser }) => {
   async function countLikeUpdated(post, posts) {
     await axios.get(`${import.meta.env.VITE_API_BACKEND}count/like/${post.id}`)
       .then((result) => {
-        const newLike = posts.map((obj) => {
+        const newLike = posts && posts.map((obj) => {
           if (obj.id === post.id) {
             return { ...obj, "like": result.data.like };
           }
