@@ -70,6 +70,7 @@ const Ads = ({ idUser }) => {
   useEffect(() => {
     getAllPosts();
   }, []);
+  console.log('RENDER posts:', posts, Array.isArray(posts));
 
   return (
     <Flex gap={"large"} wrap >
