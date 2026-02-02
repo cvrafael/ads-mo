@@ -10,14 +10,14 @@ const Ads = ({ idUser }) => {
   const LikeValue = useRef(); // Criar a referência
 
   async function getAllPosts() {
-    await axios.get('http://localhost:3030/posts')
+    await axios.get(`${import.meta.env.VITE_API_BACKEND}posts`)
       .then((result) => {
         setPosts(result.data);
       });
   }
 
   async function countLikeUpdated(post, posts) {
-    await axios.get(`http://localhost:3030/count/like/${post.id}`)
+    await axios.get(`${import.meta.env.VITE_API_BACKEND}count/like/${post.id}`)
       .then((result) => {
         const newLike = posts.map((obj) => {
           if (obj.id === post.id) {
@@ -31,7 +31,7 @@ const Ads = ({ idUser }) => {
 
   async function giveLike(post, iduser) {
 
-    await axios.post('http://localhost:3030/user/like', {
+    await axios.post(`${import.meta.env.VITE_API_BACKEND}user/like`, {
       "fk_id_post": post.id,
       "fk_id_user": iduser
     },
@@ -44,7 +44,7 @@ const Ads = ({ idUser }) => {
 
     if (LikeValue.current == 0) {
       const arrayTheObjects = { "like": 1, 'fk_id_user': iduser, 'fk_id_post': post.id };
-      await axios.post('http://localhost:3030/like', arrayTheObjects, 
+      await axios.post(`${import.meta.env.VITE_API_BACKEND}like`, arrayTheObjects, 
         
         {
             withCredentials: true
@@ -53,7 +53,7 @@ const Ads = ({ idUser }) => {
       );
     } else if (LikeValue.current == 1) {
       const arrayTheObjects = { "like": 0, 'fk_id_user': iduser, 'fk_id_post': post.id };
-      await axios.post('http://localhost:3030/like', arrayTheObjects,
+      await axios.post(`${import.meta.env.VITE_API_BACKEND}like`, arrayTheObjects,
         {
             withCredentials: true
         }

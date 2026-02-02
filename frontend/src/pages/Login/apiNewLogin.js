@@ -13,7 +13,7 @@ import axios from "axios";
 // }
 export async function getApiUserDatas(googleLogin) {
 
-    return await axios.post(`http://localhost:3030/api/google-login`,
+    return await axios.post(`${import.meta.env.VITE_API_BACKEND}api/google-login`,
 
         {
             token: googleLogin.credential
@@ -28,13 +28,13 @@ export async function getApiUserDatas(googleLogin) {
 
 export async function isAdmin(id_sub) {
 
-    return await axios.get(`http://localhost:3030/user/isadmin/${id_sub}`);
+    return await axios.get(`${import.meta.env.VITE_API_BACKEND}user/isadmin/${id_sub}`);
 
 }
 
 export async function recoveryUser() {
 
-        return await axios.get(`http://localhost:3030/api/me`,
+        return await axios.get(`${import.meta.env.VITE_API_BACKEND}api/me`,
     
             {
                 withCredentials: true, // 🔥 MUITO IMPORTANTE
@@ -47,7 +47,7 @@ export async function recoveryUser() {
 
 export async function logout() {
 
-    return await axios.post('http://localhost:3030/api/logout', {},
+    return await axios.post(`${import.meta.env.VITE_API_BACKEND}api/logout`, {},
 
         {
             withCredentials: true,

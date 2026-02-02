@@ -3,7 +3,7 @@ const { QueryTypes } = require('sequelize');
 const { Payment, MercadoPagoConfig } = require('mercadopago');
 const axios = require('axios');
 const uuidv4 = require('uuid');
-require("dotenv").config;
+require("dotenv").config();
 const client = new MercadoPagoConfig({
     accessToken: process.env.ACCESS_TOKEN_MP,
     options: 

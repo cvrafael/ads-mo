@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function postProfileDatas(avatar_datas) {
 
-    await axios.post(`http://localhost:3030/avatar`, avatar_datas, {
+    await axios.post(`${import.meta.env.VITE_API_BACKEND}avatar`, avatar_datas, {
         
         headers: {
 
@@ -21,6 +21,6 @@ export async function postProfileDatas(avatar_datas) {
 
 export async function findAvatar(id){
 
-    return await axios.get(`http://localhost:3030/user/avatar/${id}`)      
+    return await axios.get(`${import.meta.env.VITE_API_BACKEND}user/avatar/${id}`)      
 
 };
