@@ -15,6 +15,7 @@ import ButtonNewAds from './components/ButtonNewAds/ButtonNewAds.jsx'
 import PremiumAds from './pages/PremiumAds/PremiumAds.jsx';
 import PixMercadoPago from './components/PixMercadoPago/PixMercadoPago.jsx';
 import Administrator from './pages/Administrator/Administrator.jsx';
+import TEMaintenance from './pages/TEMaintenance/index.jsx';
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const App = () => {
   const [datas, setDatas] = useState(null);
@@ -40,6 +41,8 @@ const App = () => {
           }
         >
           <Route index element={<Ads idUser={datas?.id_sub} />} />
+          
+          <Route path="tracker" element={<TEMaintenance />} />
           <Route path="ads" element={<Ads idUser={datas?.id_sub} />} />
           <Route path="myads" element={<MyAds idUser={datas?.id_sub} />} />
           <Route path="profile" element={<Profile idUser={datas?.id_sub} />} />

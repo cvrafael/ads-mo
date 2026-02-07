@@ -22,6 +22,7 @@ function getItem(label, key, icon, children) {
 
 const items = [
   getItem(<Link to={"/"}>Home</Link>, '100', <PieChartOutlined />),
+  getItem(<Link to={"/tracker"}>Maintenance</Link>, 'sub3', <TeamOutlined />,),
   getItem(<Link to={"/ads"}>MuOnline</Link>, 'sub2', <TeamOutlined />,),
   getItem(<Link to={"/premium"}>MuOnline Premium</Link>, '200', <SketchOutlined />,),
   admin ? getItem(<Link to={"/admin"}>Administrator</Link>, '300', <SketchOutlined />,): "",

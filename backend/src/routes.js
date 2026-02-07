@@ -7,6 +7,7 @@ const postControllers = require("./controllers/postControllers/postControllers")
 const userControllers = require("./controllers/userControllers/userControllers");
 const likeControllers = require('./controllers/likeControllers/likeControllers');
 const pixController = require("./controllers/pixControllers/pixControllers");
+const maintenance = require("./controllers/trackerControllers/maintanenceControllers")
 const upload = multer({storage});
 const router = Router();
 
@@ -62,4 +63,5 @@ router.post("/payment", pixController.createPix)
 router.post("/webhook/mercadopago", pixController.statusWebhookMercadoPago);
 router.post("/payment/approved", pixController.verifyStatusPaymentWasApproved);
 router.put("/cancel-payment", pixController.cancelPayment);
+router.get("/tracker-maintenance", maintenance.find_all);
 module.exports = router;
