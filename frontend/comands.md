@@ -62,6 +62,3 @@
 
 # Up app build
 ## pm2 serve dist/ --name my-app 3000 --spa
-
-# token for githun
-## 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
